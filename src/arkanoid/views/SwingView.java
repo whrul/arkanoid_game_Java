@@ -18,6 +18,7 @@ public class SwingView extends JPanel implements View, KeyListener {
     private int height;
 
     public SwingView() {
+        super();
         this.setFocusable(true);
         this.addKeyListener(this);
         this.width = 1200;
@@ -60,39 +61,44 @@ public class SwingView extends JPanel implements View, KeyListener {
     }
 
     @Override
-    public void paintComponent(Graphics g) {
-        fillBackground(g);
-        drawBall(g);
-        drawPlayer(g);
-        drawBricks(g);
+    public void paintComponent(Graphics graphics) {
+        super.paintComponent(graphics);
+        this.drawScene(graphics);
     }
 
-    public void fillBackground(Graphics g) {
-        g.setColor(Color.white);
-        g.fillRect(0, 0, this.width, this.height);
+    public void drawScene(Graphics graphics) {
+        fillBackground(graphics);
+        drawBall(graphics);
+        drawPlayer(graphics);
+        drawBricks(graphics);
     }
 
-    public void drawBall(Graphics g) {
-        g.setColor(Color.yellow);
+    public void fillBackground(Graphics graphics) {
+        graphics.setColor(Color.white);
+        graphics.fillRect(0, 0, this.width, this.height);
+    }
+
+    public void drawBall(Graphics graphics) {
+        graphics.setColor(Color.yellow);
         Vector<Ball> balls = this.mainController.getBalls();
         for (Ball ball : balls) {
-            g.fillOval(ball.getPosX(), ball.getPosY(), ball.getRadius(), ball.getRadius());
+            graphics.fillOval(ball.getPosX(), ball.getPosY(), ball.getRadius(), ball.getRadius());
         }
     }
 
-    public void drawBricks(Graphics g) {
-        g.setColor(Color.black);
+    public void drawBricks(Graphics graphics) {
+        graphics.setColor(Color.black);
         Vector<Brick> bricks = this.mainController.getBricks();
         for (Brick brick : bricks) {
-            g.fillRect(brick.getPosX(), brick.getPosY(), brick.getWidth(), brick.getHeight());
+            graphics.fillRect(brick.getPosX(), brick.getPosY(), brick.getWidth(), brick.getHeight());
         }
 
     }
 
-    public void drawPlayer(Graphics g) {
-        g.setColor(Color.red);
+    public void drawPlayer(Graphics graphics) {
+        graphics.setColor(Color.red);
         Player player = this.mainController.getPlayer();
-        g.fillRect(player.getPosX(), player.getPosY(), player.getWidth(), player.getHeight());
+        graphics.fillRect(player.getPosX(), player.getPosY(), player.getWidth(), player.getHeight());
     }
 
 }
