@@ -18,19 +18,31 @@ public class SwingView extends JPanel implements View, KeyListener {
     private int height;
 
     private JFrame jFrame;
+    private JLabel scores;
+    private JLabel lives;
 
-    public SwingView(int width, int height) {
+    public SwingView(int width, int height, MainController mainController) {
         super();
 
         this.width = width;
         this.height = height;
+        this.mainController = mainController;
 
-        this.jFrame = new JFrame();
+        this.jFrame = new JFrame("Arkanoid");
         this.jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.jFrame.setSize(this.width, this.height);
-        this.jFrame.setTitle("Arkanoid");
         this.jFrame.setResizable(false);
         this.jFrame.setVisible(true);
+
+        this.scores = new JLabel();
+        this.scores.setFont(new Font("Arial", Font.BOLD, 20));
+
+        this.lives= new JLabel();
+        this.lives.setFont(new Font("Arial", Font.BOLD, 20));
+
+        this.add(this.scores);
+        this.add(this.lives);
+
         this.jFrame.add(this);
 
         this.setFocusable(true);
@@ -81,36 +93,52 @@ public class SwingView extends JPanel implements View, KeyListener {
         Toolkit.getDefaultToolkit().sync();
     }
 
-    public void drawScene(Graphics graphics) {
+    private void drawScene(Graphics graphics) {
         fillBackground(graphics);
         drawBall(graphics);
         drawPlayer(graphics);
         drawBricks(graphics);
+        updateScores();
+        updateLives();
     }
 
-    public void fillBackground(Graphics graphics) {
+    private void updateScores() {
+        this.scores.setText("Scores: " + this.mainController.getScores());
+        this.scores.setBounds(5, 5, 250, 30);
+    }
+    private void updateLives() {
+        this.lives.setText("Lives: " + this.mainController.getLives());
+        this.lives.setBounds(5, 45, 250, 30);
+    }
+
+
+    private void fillBackground(Graphics graphics) {
         graphics.setColor(Color.white);
         graphics.fillRect(0, 0, this.width, this.height);
     }
 
-    public void drawBall(Graphics graphics) {
+    private void drawBall(Graphics graphics) {
         graphics.setColor(Color.yellow);
         Vector<Ball> balls = this.mainController.getBalls();
         for (Ball ball : balls) {
-            graphics.fillOval(ball.getPosX(), ball.getPosY(), ball.getRadius() * 2, ball.getRadius() * 2);
+            graphics.fillOval(ball.getPosX(), ball.getPosY(), ball.getDiameter(), ball.getDiameter());
         }
     }
 
-    public void drawBricks(Graphics graphics) {
-        graphics.setColor(Color.black);
+    private void drawBricks(Graphics graphics) {
         Vector<Brick> bricks = this.mainController.getBricks();
         for (Brick brick : bricks) {
+            if (brick.getHitsForDestroying() > 1) {
+                graphics.setColor(Color.green);
+            } else {
+                graphics.setColor(Color.red);
+            }
             graphics.fillRect(brick.getPosX(), brick.getPosY(), brick.getWidth(), brick.getHeight());
         }
 
     }
 
-    public void drawPlayer(Graphics graphics) {
+    private void drawPlayer(Graphics graphics) {
         graphics.setColor(Color.red);
         Player player = this.mainController.getPlayer();
         graphics.fillRect(player.getPosX(), player.getPosY(), player.getWidth(), player.getHeight());

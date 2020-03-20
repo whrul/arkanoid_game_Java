@@ -23,12 +23,29 @@ public class MainController {
     private View view;
     private Timer timer;
 
-    public MainController(View view) {
-        this.view = view;
+    public MainController() {
         this.ballController = new BallController();
         this.brickController = new BrickController();
-        this.playerController = new PlayerController(new Player(this.view.getWidth() / 2 - 40, this.view.getHeight() - 70, 80, 20));
+        this.playerController = new PlayerController(new Player(0, 0, 80, 20));
         this.gameController = new GameController(new Game(this.playerController.getPlayer()));
+
+//        this.gameController.addBall(new Ball(8, this.view.getWidth() / 2, this.view.getHeight() / 2, -5, -5));
+////        this.gameController.addBall(new Ball(8, this.view.getWidth() / 2, this.view.getHeight() / 2, 3, -3));
+////        this.gameController.addBall(new Ball(8, this.view.getWidth() / 2, this.view.getHeight() / 2, -3, 3));
+//
+//        this.addBricks();
+
+    }
+
+    public void setView(View view) {
+        this.view = view;
+        this.finishSetUp();
+    }
+
+    private void finishSetUp() {
+
+        this.gameController.getPlayer().setPosX(this.view.getWidth() / 2 - this.gameController.getPlayer().getWidth() / 2);
+        this.gameController.getPlayer().setPosY(this.view.getHeight() - this.gameController.getPlayer().getHeight() - 50);
 
         this.gameController.addBall(new Ball(8, this.view.getWidth() / 2, this.view.getHeight() / 2, -5, -5));
 //        this.gameController.addBall(new Ball(8, this.view.getWidth() / 2, this.view.getHeight() / 2, 3, -3));
@@ -41,9 +58,21 @@ public class MainController {
     }
 
     private void addBricks() {
-        this.gameController.addBrick(new Brick(100, 50, 100, 30, 1));
-        this.gameController.addBrick(new Brick(400, 100, 100, 30, 1));
-        this.gameController.addBrick(new Brick(700, 75, 100, 30, 1));
+        int ammountOfBricksInX = this.view.getWidth() / 100;
+        int ammoOfBricksInY = this.view.getHeight() / 3 * 1 / 30;
+        for (int i = 0 ; i < ammountOfBricksInX; ++i) {
+            for (int j = 0; j < ammoOfBricksInY; ++j) {
+                this.gameController.addBrick(new Brick((i + 1) * 10 + i * 100, (j + 1) * 10 + j * 30, 100, 30, 2));
+            }
+        }
+    }
+
+    public int getScores() {
+        return this.gameController.getScores();
+    }
+
+    public int getLives() {
+        return this.gameController.getLives();
     }
 
     private class GameCycle implements ActionListener {
@@ -90,9 +119,9 @@ public class MainController {
 
 
     private void checkBallPosition(Ball ball) {
-        this.checkBallPositionCellAndPlayer(ball);
         this.checkBallPositionWalls(ball);
         this.checkBallPositionBricks(ball);
+        this.checkBallPositionCellAndPlayer(ball);
     }
     private void checkBallPositionWalls(Ball ball) {
         if (ball.getPosX() < 0) {

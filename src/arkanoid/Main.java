@@ -5,8 +5,8 @@ import arkanoid.views.SwingView;
 
 public class Main {
     public static void main(String[] args) {
-        SwingView swingView = new SwingView(1200, 600);
-        MainController mainController = new MainController(swingView);
-        swingView.setController(mainController);
+        MainController mainController = new MainController();
+        SwingView swingView = new SwingView(1200, 600, mainController);
+        mainController.setView(swingView);
     }
 }

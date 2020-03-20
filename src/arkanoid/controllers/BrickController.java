@@ -9,4 +9,8 @@ public class BrickController {
         return brick.getHitsForDestroying();
     }
 
+    public int getHitsForDestroying(Brick brick) {
+        return brick.getHitsForDestroying();
+    }
+
 }

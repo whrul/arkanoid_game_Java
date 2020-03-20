@@ -44,4 +44,11 @@ public class GameController {
         return this.game.getBricks();
     }
 
+    public int getScores() {
+        return this.game.getScores();
+    }
+
+    public int getLives() {
+        return this.game.getLives();
+    }
 }

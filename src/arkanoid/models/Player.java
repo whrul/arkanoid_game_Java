@@ -25,6 +25,10 @@ public class Player {
         return posY;
     }
 
+    public void setPosY(int posY) {
+        this.posY = posY;
+    }
+
     public int getWidth() {
         return width;
     }
