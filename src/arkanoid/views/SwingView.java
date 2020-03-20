@@ -17,12 +17,24 @@ public class SwingView extends JPanel implements View, KeyListener {
     private int width;
     private int height;
 
-    public SwingView() {
+    private JFrame jFrame;
+
+    public SwingView(int width, int height) {
         super();
+
+        this.width = width;
+        this.height = height;
+
+        this.jFrame = new JFrame();
+        this.jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.jFrame.setSize(this.width, this.height);
+        this.jFrame.setTitle("Arkanoid");
+        this.jFrame.setResizable(false);
+        this.jFrame.setVisible(true);
+        this.jFrame.add(this);
+
         this.setFocusable(true);
         this.addKeyListener(this);
-        this.width = 1200;
-        this.height = 600;
     }
 
     @Override
@@ -64,6 +76,8 @@ public class SwingView extends JPanel implements View, KeyListener {
     public void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
         this.drawScene(graphics);
+
+
         Toolkit.getDefaultToolkit().sync();
     }
 
