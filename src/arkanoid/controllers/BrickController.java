@@ -4,8 +4,9 @@ import arkanoid.models.Brick;
 
 public class BrickController {
 
-    public void getDamaged(Brick brick) {
+    public int getDamaged(Brick brick) {
         brick.setHitsForDestroying(brick.getHitsForDestroying() - 1);
+        return brick.getHitsForDestroying();
     }
 
 }
