@@ -69,23 +69,29 @@ public class MainController {
 
 
     private void checkBallPosition(Ball ball) {
+        this.checkBallPositionCellAndPlayer(ball);
+        this.checkBallPositionWalls(ball);
+    }
+    private void checkBallPositionWalls(Ball ball) {
+        if (ball.getPosX() < 0) {
+            this.ballController.reverseXDir(ball);
+            ball.setPosX(0);
+        } else if (ball.getPosX() + ball.getDiameter() > this.view.getWidth()) {
+            this.ballController.reverseXDir(ball);
+            ball.setPosX(this.view.getWidth() -  ball.getDiameter());
+        }
+    }
+    private void checkBallPositionCellAndPlayer(Ball ball) {
         if (ball.getPosY() < 0) {
             this.ballController.reverseYDir(ball);
             ball.setPosY(0);
-        } else if (ball.getPosY() + ball.getRadius() * 2 > this.gameController.getPlayer().getPosY()) {
+        } else if (ball.getPosY() + ball.getDiameter() > this.gameController.getPlayer().getPosY()) {
             if (ball.getPosX() + ball.getDiameter() < this.gameController.getPlayer().getPosX() || ball.getPosX() > this.gameController.getPlayer().getPosX() + this.gameController.getPlayer().getWidth()) {
                 this.gameController.destroyBall(ball);
                 return;
             }
             this.ballController.reverseYDir(ball);
-            ball.setPosY(this.gameController.getPlayer().getPosY() - ball.getRadius() * 2);
-        }
-        if (ball.getPosX() < 0) {
-            this.ballController.reverseXDir(ball);
-            ball.setPosX(0);
-        } else if (ball.getPosX() + ball.getRadius() * 2 > this.view.getWidth()) {
-            this.ballController.reverseXDir(ball);
-            ball.setPosX(this.view.getWidth() -  ball.getRadius() * 2);
+            ball.setPosY(this.gameController.getPlayer().getPosY() - ball.getDiameter());
         }
     }
 
