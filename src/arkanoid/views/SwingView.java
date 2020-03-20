@@ -64,6 +64,7 @@ public class SwingView extends JPanel implements View, KeyListener {
     public void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
         this.drawScene(graphics);
+        Toolkit.getDefaultToolkit().sync();
     }
 
     public void drawScene(Graphics graphics) {
@@ -82,7 +83,7 @@ public class SwingView extends JPanel implements View, KeyListener {
         graphics.setColor(Color.yellow);
         Vector<Ball> balls = this.mainController.getBalls();
         for (Ball ball : balls) {
-            graphics.fillOval(ball.getPosX(), ball.getPosY(), ball.getRadius(), ball.getRadius());
+            graphics.fillOval(ball.getPosX(), ball.getPosY(), ball.getRadius() * 2, ball.getRadius() * 2);
         }
     }
 

@@ -14,7 +14,7 @@ public class BallController {
     }
 
     public void reverseYDir(Ball ball) {
-        ball.setDirY(-ball.getDirX());
+        ball.setDirY(-ball.getDirY());
     }
 
 }

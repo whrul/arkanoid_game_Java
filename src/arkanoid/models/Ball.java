@@ -11,6 +11,16 @@ public class Ball {
         this.radius = radius;
         this.posX = posX;
         this.posY = posY;
+        this.dirX = 0;
+        this.dirY = 0;
+    }
+
+    public Ball(int radius, int posX, int posY, int dirX, int dirY) {
+        this.radius = radius;
+        this.posX = posX;
+        this.posY = posY;
+        this.dirX = dirX;
+        this.dirY = dirY;
     }
 
     public int getPosX() {
