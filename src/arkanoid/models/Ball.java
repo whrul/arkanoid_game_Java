@@ -58,4 +58,8 @@ public class Ball {
     public int getRadius() {
         return radius;
     }
+
+    public int getDiameter() {
+        return this.radius * 2;
+    }
 }
