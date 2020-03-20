@@ -17,6 +17,8 @@ public class MainController {
     private BrickController brickController;
     private PlayerController playerController;
     private GameController gameController;
+    private boolean aPressed = false;
+    private boolean dPressed = false;
 
     private View view;
     private Timer timer;
@@ -58,7 +60,14 @@ public class MainController {
     }
 
     private void doLogics() {
-       this.moveBalls();
+       if (this.aPressed) {
+           this.playerController.moveLeft();
+       }
+       if (this.dPressed) {
+           this.playerController.moveRight();
+       }
+
+        this.moveBalls();
 
        this.checkPlayerPosition();
 
@@ -181,15 +190,22 @@ public class MainController {
 
     public void keyPressed(KeyEvent keyEvent) {
         if(Character.toUpperCase(keyEvent.getKeyChar()) == 'A') {
-            this.playerController.moveLeft();
+//            this.playerController.moveLeft();
+            this.aPressed = true;
         } else if(Character.toUpperCase(keyEvent.getKeyChar()) == 'D') {
-            this.playerController.moveRight();
+//            this.playerController.moveRight();
+            this.dPressed = true;
         }
 //        this.checkPlayerPosition();
 //        this.view.updateView();
     }
 
     public void keyReleased(KeyEvent keyEvent) {
+        if(Character.toUpperCase(keyEvent.getKeyChar()) == 'A') {
+            this.aPressed = false;
+        } else if(Character.toUpperCase(keyEvent.getKeyChar()) == 'D') {
+            this.dPressed = false;
+        }
     }
 
     public Player getPlayer() {
