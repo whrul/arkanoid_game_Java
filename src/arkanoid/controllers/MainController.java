@@ -28,13 +28,6 @@ public class MainController {
         this.brickController = new BrickController();
         this.playerController = new PlayerController(new Player(0, 0, 80, 20));
         this.gameController = new GameController(new Game(this.playerController.getPlayer()));
-
-//        this.gameController.addBall(new Ball(8, this.view.getWidth() / 2, this.view.getHeight() / 2, -5, -5));
-////        this.gameController.addBall(new Ball(8, this.view.getWidth() / 2, this.view.getHeight() / 2, 3, -3));
-////        this.gameController.addBall(new Ball(8, this.view.getWidth() / 2, this.view.getHeight() / 2, -3, 3));
-//
-//        this.addBricks();
-
     }
 
     public void setView(View view) {
@@ -151,11 +144,13 @@ public class MainController {
             if (this.ballHitsBrickOnLeft(ball, bricks.get(i)) || this.ballHitsBrickOnRight(ball, bricks.get(i))) {
                 this.ballController.reverseXDir(ball);
                 if (this.brickController.getDamaged(bricks.get(i)) == 0) {
+                    this.gameController.addScores(100 * bricks.get(i).getHitsForDestroyingStartVal());
                     this.gameController.destroyBrick(bricks.get(i));
                 }
             } else if (this.ballHitsBrickOnUp(ball, bricks.get(i)) || this.ballHitsBrickOnDown(ball, bricks.get(i))) {
                 this.ballController.reverseYDir(ball);
                 if (this.brickController.getDamaged(bricks.get(i)) == 0) {
+                    this.gameController.addScores(100 * bricks.get(i).getHitsForDestroyingStartVal());
                     this.gameController.destroyBrick(bricks.get(i));
                 }
             }

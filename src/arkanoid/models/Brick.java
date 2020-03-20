@@ -6,6 +6,7 @@ public class Brick {
     private int width;
     private int height;
     private int hitsForDestroying;
+    private int hitsForDestroyingStartVal;
 
     public Brick(int posX, int posY, int width, int height, int hitsForDestroying) {
         this.posX = posX;
@@ -13,6 +14,7 @@ public class Brick {
         this.width = width;
         this.height = height;
         this.hitsForDestroying = hitsForDestroying;
+        this.hitsForDestroyingStartVal = this.hitsForDestroying;
     }
 
     public int getPosX() {
@@ -38,4 +40,9 @@ public class Brick {
     public void setHitsForDestroying(int hitsForDestroying) {
         this.hitsForDestroying = hitsForDestroying;
     }
+
+    public int getHitsForDestroyingStartVal() {
+        return hitsForDestroyingStartVal;
+    }
+
 }
