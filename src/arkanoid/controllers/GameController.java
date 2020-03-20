@@ -26,8 +26,9 @@ public class GameController {
     public void destroyBall(Ball ball) {
         this.game.getBalls().remove(ball);
     }
-    public void decreaseLives() {
+    public int decreaseLives() {
         this.game.setLives(this.game.getLives() - 1);
+        return this.game.getLives();
     }
     public void addScores(int scores) {
         this.game.setScores(this.game.getScores() + scores);

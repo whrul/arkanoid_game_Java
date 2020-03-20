@@ -25,12 +25,12 @@ public class MainController {
         this.view = view;
         this.ballController = new BallController();
         this.brickController = new BrickController();
-        this.playerController = new PlayerController(new Player(this.view.getWidth() / 2 - 40, this.view.getHeight() - 100, 80, 20));
+        this.playerController = new PlayerController(new Player(this.view.getWidth() / 2 - 40, this.view.getHeight() - 70, 80, 20));
         this.gameController = new GameController(new Game(this.playerController.getPlayer()));
 
-        this.gameController.addBall(new Ball(8, this.view.getWidth() / 2, this.view.getHeight() / 2, -3, -3));
-        this.gameController.addBall(new Ball(8, this.view.getWidth() / 2, this.view.getHeight() / 2, 3, -3));
-        this.gameController.addBall(new Ball(8, this.view.getWidth() / 2, this.view.getHeight() / 2, -3, 3));
+        this.gameController.addBall(new Ball(8, this.view.getWidth() / 2, this.view.getHeight() / 2, -5, -5));
+//        this.gameController.addBall(new Ball(8, this.view.getWidth() / 2, this.view.getHeight() / 2, 3, -3));
+//        this.gameController.addBall(new Ball(8, this.view.getWidth() / 2, this.view.getHeight() / 2, -3, 3));
 
         this.addBricks();
 
@@ -39,7 +39,9 @@ public class MainController {
     }
 
     private void addBricks() {
-        this.gameController.addBrick(new Brick(100, 100, 100, 30, 3));
+        this.gameController.addBrick(new Brick(100, 50, 100, 30, 1));
+        this.gameController.addBrick(new Brick(400, 100, 100, 30, 1));
+        this.gameController.addBrick(new Brick(700, 75, 100, 30, 1));
     }
 
     private class GameCycle implements ActionListener {
@@ -61,7 +63,11 @@ public class MainController {
        this.checkPlayerPosition();
 
        if (this.gameController.getBalls().isEmpty()) {
-           this.timer.stop();
+           if (this.gameController.decreaseLives() == 0) {
+               this.timer.stop();
+           } else {
+               this.gameController.addBall(new Ball(8, this.view.getWidth() / 2, this.view.getHeight() / 2, -5, -5));
+           }
        }
     }
 
@@ -107,12 +113,12 @@ public class MainController {
             if (this.ballHitsBrickOnLeft(ball, bricks.get(i)) || this.ballHitsBrickOnRight(ball, bricks.get(i))) {
                 this.ballController.reverseXDir(ball);
                 if (this.brickController.getDamaged(bricks.get(i)) == 0) {
-                    bricks.remove(bricks.get(i));
+                    this.gameController.destroyBrick(bricks.get(i));
                 }
             } else if (this.ballHitsBrickOnUp(ball, bricks.get(i)) || this.ballHitsBrickOnDown(ball, bricks.get(i))) {
                 this.ballController.reverseYDir(ball);
                 if (this.brickController.getDamaged(bricks.get(i)) == 0) {
-                    bricks.remove(bricks.get(i));
+                    this.gameController.destroyBrick(bricks.get(i));
                 }
             }
         }
