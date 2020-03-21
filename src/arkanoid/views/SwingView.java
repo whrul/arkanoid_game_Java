@@ -3,6 +3,7 @@ package arkanoid.views;
 import arkanoid.controllers.MainController;
 import arkanoid.models.Ball;
 import arkanoid.models.Brick;
+import arkanoid.models.GameBonus;
 import arkanoid.models.Player;
 
 import javax.swing.*;
@@ -97,9 +98,18 @@ public class SwingView extends JPanel implements View, KeyListener {
         fillBackground(graphics);
         drawBall(graphics);
         drawPlayer(graphics);
+        drawGameBonuses(graphics);
         drawBricks(graphics);
         updateScores();
         updateLives();
+    }
+
+    private void drawGameBonuses(Graphics graphics) {
+        Vector<GameBonus> gameBonuses = this.mainController.getGameBonuses();
+        graphics.setColor(Color.orange);
+        for (GameBonus gameBonus : gameBonuses) {
+            graphics.fillRect(gameBonus.getPosX(), gameBonus.getPosY(), gameBonus.getWidth(), gameBonus.getHeight());
+        }
     }
 
     private void updateScores() {
@@ -141,7 +151,7 @@ public class SwingView extends JPanel implements View, KeyListener {
     private void drawPlayer(Graphics graphics) {
         graphics.setColor(Color.red);
         Player player = this.mainController.getPlayer();
-        graphics.fillRect(player.getPosX(), player.getPosY(), player.getWidth(), player.getHeight());
+        graphics.fillRoundRect(player.getPosX(), player.getPosY(), player.getWidth(), player.getHeight(), player.getHeight(), player.getHeight());
     }
 
 }

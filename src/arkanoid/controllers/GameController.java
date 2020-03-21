@@ -1,9 +1,6 @@
 package arkanoid.controllers;
 
-import arkanoid.models.Ball;
-import arkanoid.models.Brick;
-import arkanoid.models.Game;
-import arkanoid.models.Player;
+import arkanoid.models.*;
 
 import java.util.Vector;
 
@@ -51,4 +48,18 @@ public class GameController {
     public int getLives() {
         return this.game.getLives();
     }
+
+    public void addGameBonus(GameBonus gameBonus) {
+        this.game.getGameBonuses().add(gameBonus);
+    }
+
+    public void destroyGameBonus(GameBonus gameBonus) {
+        this.game.getGameBonuses().remove(gameBonus);
+    }
+
+    public Vector<GameBonus> getGameBonuses() {
+        return this.game.getGameBonuses();
+    }
+
+
 }

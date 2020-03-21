@@ -6,6 +6,8 @@ public class Game {
     private Player player;
     private Vector<Brick> bricks;
     private Vector<Ball> balls;
+    private Vector<GameBonus> gameBonuses;
+
     private int scores;
     private int lives;
 
@@ -13,6 +15,7 @@ public class Game {
         this.player = player;
         this.bricks = new Vector<Brick>();
         this.balls = new Vector<Ball>();
+        this.gameBonuses = new Vector<GameBonus>();
         this.scores = 0;
         this.lives = 3;
     }
@@ -45,5 +48,9 @@ public class Game {
 
     public void setLives(int lives) {
         this.lives = lives;
+    }
+
+    public Vector<GameBonus> getGameBonuses() {
+        return this.gameBonuses;
     }
 }

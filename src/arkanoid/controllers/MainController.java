@@ -1,9 +1,6 @@
 package arkanoid.controllers;
 
-import arkanoid.models.Ball;
-import arkanoid.models.Brick;
-import arkanoid.models.Game;
-import arkanoid.models.Player;
+import arkanoid.models.*;
 import arkanoid.views.View;
 
 import javax.swing.*;
@@ -17,17 +14,20 @@ public class MainController {
     private BrickController brickController;
     private PlayerController playerController;
     private GameController gameController;
+    private GameBonusController gameBonusController;
     private boolean aPressed = false;
     private boolean dPressed = false;
 
     private View view;
     private Timer timer;
+    private Timer bonusTimer;
 
     public MainController() {
         this.ballController = new BallController();
         this.brickController = new BrickController();
         this.playerController = new PlayerController(new Player(0, 0, 80, 20));
         this.gameController = new GameController(new Game(this.playerController.getPlayer()));
+        this.gameBonusController = new GameBonusController();
     }
 
     public void setView(View view) {
@@ -41,13 +41,14 @@ public class MainController {
         this.gameController.getPlayer().setPosY(this.view.getHeight() - this.gameController.getPlayer().getHeight() - 50);
 
         this.gameController.addBall(new Ball(8, this.view.getWidth() / 2, this.view.getHeight() / 2, -5, -5));
-//        this.gameController.addBall(new Ball(8, this.view.getWidth() / 2, this.view.getHeight() / 2, 3, -3));
-//        this.gameController.addBall(new Ball(8, this.view.getWidth() / 2, this.view.getHeight() / 2, -3, 3));
 
         this.addBricks();
 
         this.timer = new Timer(15, new GameCycle());
         this.timer.restart();
+
+        this.bonusTimer = new Timer(3000, new BonusCycle());
+        this.bonusTimer.restart();
     }
 
     private void addBricks() {
@@ -68,12 +69,27 @@ public class MainController {
         return this.gameController.getLives();
     }
 
+    public Vector<GameBonus> getGameBonuses() {
+        return this.gameController.getGameBonuses();
+    }
+
     private class GameCycle implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             doCycle();
         }
+    }
+    private class BonusCycle implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent actionEvent) {
+            doBonusStuff();
+        }
+    }
+
+    private void doBonusStuff() {
+        this.gameController.addGameBonus(new GameBonus(600, 400, 50, 50, 2 ));
     }
 
     private void doCycle() {
@@ -89,7 +105,7 @@ public class MainController {
            this.playerController.moveRight();
        }
 
-        this.moveBalls();
+       this.moveBalls();
 
        this.checkPlayerPosition();
 
@@ -114,8 +130,20 @@ public class MainController {
     private void checkBallPosition(Ball ball) {
         this.checkBallPositionWalls(ball);
         this.checkBallPositionBricks(ball);
+        this.checkBallPositionGameBonuses(ball);
         this.checkBallPositionCellAndPlayer(ball);
     }
+
+    private void checkBallPositionGameBonuses(Ball ball) {
+        Vector<GameBonus> gameBonuses = this.gameController.getGameBonuses();
+        for (int i = gameBonuses.size() - 1; i >=0; --i) {
+            if (true) {
+                this.gameBonusController.makeActive(gameBonuses.get(i), this.gameController.getPlayer(), this.gameController.getBalls(), this.gameController.getBricks());
+                this.gameController.destroyGameBonus(gameBonuses.get(i));
+            }
+        }
+    }
+
     private void checkBallPositionWalls(Ball ball) {
         if (ball.getPosX() < 0) {
             this.ballController.reverseXDir(ball);
