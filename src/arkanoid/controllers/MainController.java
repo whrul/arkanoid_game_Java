@@ -55,11 +55,12 @@ public class MainController {
     }
 
     private void addBricks() {
+        Random random = new Random();
         int ammountOfBricksInX = this.view.getWidth() / 100;
         int ammoOfBricksInY = this.view.getHeight() / 3 * 1 / 30;
         for (int i = 0 ; i < ammountOfBricksInX; ++i) {
             for (int j = 0; j < ammoOfBricksInY; ++j) {
-                this.gameController.addBrick(new Brick((i + 1) * 10 + i * 100, (j + 1) * 10 + j * 30, 100, 30, 2));
+                this.gameController.addBrick(new Brick((i + 1) * 10 + i * 100, (j + 1) * 10 + j * 30, 100, 30, random.nextInt(3) + 1));
             }
         }
     }
@@ -74,6 +75,10 @@ public class MainController {
 
     public Vector<GameBonus> getGameBonuses() {
         return this.gameController.getGameBonuses();
+    }
+
+    public Vector<GameBonusTimer> getGameBonusTimers() {
+        return this.gameBonuses;
     }
 
     private class GameCycle implements ActionListener {
@@ -315,14 +320,22 @@ public class MainController {
         return this.gameController.getBricks();
     }
 
-    private class GameBonusTimer {
-        GameBonus gameBonus;
-        Timer timeForDestroying;
+    public class GameBonusTimer {
+        private GameBonus gameBonus;
+        private Timer timeForDestroying;
 
         public GameBonusTimer(GameBonus gameBonus) {
             this.gameBonus = gameBonus;
-            this.timeForDestroying = new Timer(7000, new EndOfBonusCycle(this));
+            this.timeForDestroying = new Timer(15000, new EndOfBonusCycle(this));
             this.timeForDestroying.restart();
+        }
+
+        public boolean bonusIsActive() {
+            return this.gameBonus.isUsed();
+        }
+
+        public int getBonusCode() {
+            return this.gameBonus.getBonusCode();
         }
     }
 

@@ -37,11 +37,15 @@ public class SwingView extends JPanel implements View, KeyListener {
         this.jFrame.setResizable(false);
         this.jFrame.setVisible(true);
 
+        this.setBackground(Color.BLACK);
+
         this.scores = new JLabel();
-        this.scores.setFont(new Font("Arial", Font.BOLD, 20));
+        this.scores.setFont(new Font("TimesRoman", Font.BOLD, 25));
+        this.scores.setForeground(Color.WHITE);
 
         this.lives= new JLabel();
-        this.lives.setFont(new Font("Arial", Font.BOLD, 20));
+        this.lives.setFont(new Font("TimesRoman", Font.BOLD, 25));
+        this.lives.setForeground(Color.WHITE);
 
         this.add(this.scores);
         this.add(this.lives);
@@ -105,18 +109,28 @@ public class SwingView extends JPanel implements View, KeyListener {
         super.paintComponent(graphics);
         this.drawScene(graphics);
 
-
         Toolkit.getDefaultToolkit().sync();
     }
 
     private void drawScene(Graphics graphics) {
-        fillBackground(graphics);
+//        fillBackground(graphics);
         drawBall(graphics);
         drawPlayer(graphics);
         drawGameBonuses(graphics);
         drawBricks(graphics);
+        drawActiveGameBonuses(graphics);
         updateScores();
         updateLives();
+    }
+
+    private void drawActiveGameBonuses(Graphics graphics) {
+        Vector<MainController.GameBonusTimer> gameBonusTimers = this.mainController.getGameBonusTimers();
+        for (int i = 0; i < gameBonusTimers.size(); ++i) {
+            if (gameBonusTimers.get(i).bonusIsActive()) {
+                graphics.setColor(this.colors.get(gameBonusTimers.get(i).getBonusCode() % this.colors.size()));
+                graphics.fillRect(50 + 40 * i, this.height - 75, 20, 20 );
+            }
+        }
     }
 
     private void drawGameBonuses(Graphics graphics) {
@@ -138,7 +152,7 @@ public class SwingView extends JPanel implements View, KeyListener {
 
 
     private void fillBackground(Graphics graphics) {
-        graphics.setColor(Color.white);
+        graphics.setColor(Color.black);
         graphics.fillRect(0, 0, this.width, this.height);
     }
 
@@ -153,10 +167,12 @@ public class SwingView extends JPanel implements View, KeyListener {
     private void drawBricks(Graphics graphics) {
         Vector<Brick> bricks = this.mainController.getBricks();
         for (Brick brick : bricks) {
-            if (brick.getHitsForDestroying() > 1) {
-                graphics.setColor(Color.green);
+            if (brick.getHitsForDestroying() > 2) {
+                graphics.setColor(Color.LIGHT_GRAY);
+            } else if (brick.getHitsForDestroying() > 1) {
+                graphics.setColor(Color.GRAY);
             } else {
-                graphics.setColor(Color.red);
+                graphics.setColor(Color.DARK_GRAY);
             }
             graphics.fillRect(brick.getPosX(), brick.getPosY(), brick.getWidth(), brick.getHeight());
         }
@@ -164,7 +180,7 @@ public class SwingView extends JPanel implements View, KeyListener {
     }
 
     private void drawPlayer(Graphics graphics) {
-        graphics.setColor(Color.red);
+        graphics.setColor(Color.WHITE);
         Player player = this.mainController.getPlayer();
         graphics.fillRoundRect(player.getPosX(), player.getPosY(), player.getWidth(), player.getHeight(), player.getHeight(), player.getHeight());
     }
