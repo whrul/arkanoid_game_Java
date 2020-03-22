@@ -1,6 +1,6 @@
 package arkanoid.models;
 
-public class Brick {
+public class Brick implements RectShape {
     private int posX;
     private int posY;
     private int width;
@@ -17,18 +17,22 @@ public class Brick {
         this.hitsForDestroyingStartVal = this.hitsForDestroying;
     }
 
+    @Override
     public int getPosX() {
         return posX;
     }
 
+    @Override
     public int getPosY() {
         return posY;
     }
 
+    @Override
     public int getWidth() {
         return width;
     }
 
+    @Override
     public int getHeight() {
         return height;
     }

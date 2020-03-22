@@ -22,6 +22,8 @@ public class SwingView extends JPanel implements View, KeyListener {
     private JLabel scores;
     private JLabel lives;
 
+    private Vector<Color> colors;
+
     public SwingView(int width, int height, MainController mainController) {
         super();
 
@@ -48,6 +50,19 @@ public class SwingView extends JPanel implements View, KeyListener {
 
         this.setFocusable(true);
         this.addKeyListener(this);
+
+        this.colors = new Vector<Color>();
+        this.addMainColors();
+    }
+
+    private void addMainColors() {
+        this.colors.add(Color.red);
+        this.colors.add(Color.orange);
+        this.colors.add(Color.yellow);
+        this.colors.add(Color.green);
+        this.colors.add(Color.cyan);
+        this.colors.add(Color.blue);
+        this.colors.add(Color.pink);
     }
 
     @Override
@@ -106,9 +121,9 @@ public class SwingView extends JPanel implements View, KeyListener {
 
     private void drawGameBonuses(Graphics graphics) {
         Vector<GameBonus> gameBonuses = this.mainController.getGameBonuses();
-        graphics.setColor(Color.orange);
         for (GameBonus gameBonus : gameBonuses) {
-            graphics.fillRect(gameBonus.getPosX(), gameBonus.getPosY(), gameBonus.getWidth(), gameBonus.getHeight());
+            graphics.setColor(this.colors.get(gameBonus.getBonusCode() % this.colors.size()));
+            graphics.fillRoundRect(gameBonus.getPosX(), gameBonus.getPosY(), gameBonus.getWidth(), gameBonus.getHeight(), gameBonus.getWidth() / 2, gameBonus.getHeight() / 2);
         }
     }
 

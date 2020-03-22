@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.Random;
 import java.util.Vector;
 
 public class MainController {
@@ -20,14 +21,18 @@ public class MainController {
 
     private View view;
     private Timer timer;
-    private Timer bonusTimer;
+    private Timer addingBonusTimer;
+    private Vector<Timer> removingBonusTimers;
+    private Vector<GameBonus> activeGameBonuses;
 
     public MainController() {
         this.ballController = new BallController();
         this.brickController = new BrickController();
-        this.playerController = new PlayerController(new Player(0, 0, 80, 20));
+        this.playerController = new PlayerController(new Player(0, 0, 80, 20, 15));
         this.gameController = new GameController(new Game(this.playerController.getPlayer()));
         this.gameBonusController = new GameBonusController();
+        this.removingBonusTimers = new Vector<Timer>();
+        this.activeGameBonuses = new Vector<GameBonus>();
     }
 
     public void setView(View view) {
@@ -47,8 +52,8 @@ public class MainController {
         this.timer = new Timer(15, new GameCycle());
         this.timer.restart();
 
-        this.bonusTimer = new Timer(3000, new BonusCycle());
-        this.bonusTimer.restart();
+        this.addingBonusTimer = new Timer(3000, new BonusCycle());
+        this.addingBonusTimer.restart();
     }
 
     private void addBricks() {
@@ -88,8 +93,35 @@ public class MainController {
         }
     }
 
+    private class EndOfBonusCycle implements ActionListener {
+        private GameBonus gameBonus;
+
+        public EndOfBonusCycle(GameBonus gameBonus) {
+            this.gameBonus = gameBonus;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent actionEvent) {
+            if (!this.gameBonus.isUsed()) {
+                gameController.destroyGameBonus(gameBonus);
+            } else {
+                gameBonusController.makeActive(gameBonus, playerController.getPlayer(), gameController.getBalls(), gameController.getBricks(), view, false);
+                activeGameBonuses.remove(gameBonus);
+            }
+            ((Timer)actionEvent.getSource()).stop();
+            removingBonusTimers.remove((Timer)actionEvent.getSource());
+        }
+    }
+
     private void doBonusStuff() {
-        this.gameController.addGameBonus(new GameBonus(600, 400, 50, 50, 2 ));
+        Random random = new Random();
+        if (random.nextBoolean()) {
+            int sizeOfSide = 30 + random.nextInt(15);
+            GameBonus gameBonus = new GameBonus(random.nextInt(this.view.getWidth()), random.nextInt(this.getPlayer().getPosY() - sizeOfSide),  sizeOfSide, sizeOfSide, random.nextInt(this.gameBonusController.getNumOfDiffBon()));
+            this.gameController.addGameBonus(gameBonus);
+            this.removingBonusTimers.add(new Timer(7000, new EndOfBonusCycle(gameBonus)));
+            this.removingBonusTimers.lastElement().restart();
+        }
     }
 
     private void doCycle() {
@@ -110,6 +142,15 @@ public class MainController {
        this.checkPlayerPosition();
 
        if (this.gameController.getBalls().isEmpty()) {
+           for (Timer timer : this.removingBonusTimers) {
+               timer.stop();
+           }
+           this.removingBonusTimers.clear();
+           for (int i = this.activeGameBonuses.size() - 1; i >= 0; --i) {
+               this.gameBonusController.makeActive(this.activeGameBonuses.get(i), this.gameController.getPlayer(), this.gameController.getBalls(), this.gameController.getBricks(), this.view, false);
+               this.activeGameBonuses.remove(this.activeGameBonuses.get(i));
+           }
+           this.gameController.getGameBonuses().clear();
            if (this.gameController.decreaseLives() == 0) {
                this.timer.stop();
            } else {
@@ -137,8 +178,12 @@ public class MainController {
     private void checkBallPositionGameBonuses(Ball ball) {
         Vector<GameBonus> gameBonuses = this.gameController.getGameBonuses();
         for (int i = gameBonuses.size() - 1; i >=0; --i) {
-            if (true) {
-                this.gameBonusController.makeActive(gameBonuses.get(i), this.gameController.getPlayer(), this.gameController.getBalls(), this.gameController.getBricks());
+            if (circleHitsRectOnDown(ball, gameBonuses.get(i))
+                || circleHitsRectOnLeft(ball, gameBonuses.get(i))
+                || circleHitsRectOnRight(ball, gameBonuses.get(i))
+                || circleHitsRectOnUp(ball, gameBonuses.get(i))) {
+                this.gameBonusController.makeActive(gameBonuses.get(i), this.gameController.getPlayer(), this.gameController.getBalls(), this.gameController.getBricks(), this.view, true);
+                this.activeGameBonuses.add(gameBonuses.get(i));
                 this.gameController.destroyGameBonus(gameBonuses.get(i));
             }
         }
@@ -169,13 +214,13 @@ public class MainController {
     private void checkBallPositionBricks(Ball ball) {
         Vector<Brick> bricks = this.gameController.getBricks();
         for (int i = bricks.size() - 1; i >= 0; --i) {
-            if (this.ballHitsBrickOnLeft(ball, bricks.get(i)) || this.ballHitsBrickOnRight(ball, bricks.get(i))) {
+            if (this.circleHitsRectOnLeft(ball, bricks.get(i)) || this.circleHitsRectOnRight(ball, bricks.get(i))) {
                 this.ballController.reverseXDir(ball);
                 if (this.brickController.getDamaged(bricks.get(i)) == 0) {
                     this.gameController.addScores(100 * bricks.get(i).getHitsForDestroyingStartVal());
                     this.gameController.destroyBrick(bricks.get(i));
                 }
-            } else if (this.ballHitsBrickOnUp(ball, bricks.get(i)) || this.ballHitsBrickOnDown(ball, bricks.get(i))) {
+            } else if (this.circleHitsRectOnUp(ball, bricks.get(i)) || this.circleHitsRectOnDown(ball, bricks.get(i))) {
                 this.ballController.reverseYDir(ball);
                 if (this.brickController.getDamaged(bricks.get(i)) == 0) {
                     this.gameController.addScores(100 * bricks.get(i).getHitsForDestroyingStartVal());
@@ -185,45 +230,45 @@ public class MainController {
         }
     }
 
-    private boolean ballHitsBrickOnDown(Ball ball, Brick brick) {
-        if(ball.getPosX() + ball.getDiameter() > brick.getPosX()
-                && ball.getPosX() + ball.getDiameter() < brick.getPosX() + brick.getWidth()
-                && ball.getPosY() < brick.getPosY() + brick.getHeight()
-                && ball.getPosY() > brick.getPosY()) {
-            ball.setPosY(brick.getPosY() + brick.getHeight());
+    private boolean circleHitsRectOnDown(CircleShape circleShape, RectShape rectShape) {
+        if(circleShape.getPosX() + circleShape.getDiameter() > rectShape.getPosX()
+                && circleShape.getPosX() + circleShape.getDiameter() < rectShape.getPosX() + rectShape.getWidth()
+                && circleShape.getPosY() < rectShape.getPosY() + rectShape.getHeight()
+                && circleShape.getPosY() > rectShape.getPosY()) {
+            circleShape.setPosY(rectShape.getPosY() + rectShape.getHeight());
             return true;
         }
         return false;
     }
 
-    private boolean ballHitsBrickOnUp(Ball ball, Brick brick) {
-        if(ball.getPosX() + ball.getDiameter() > brick.getPosX()
-                && ball.getPosX() + ball.getDiameter() < brick.getPosX() + brick.getWidth()
-                && ball.getPosY() + ball.getDiameter() > brick.getPosY()
-                && ball.getPosY() + ball.getDiameter() < brick.getPosY() + brick.getHeight()) {
-            ball.setPosY(brick.getPosY() - ball.getDiameter());
+    private boolean circleHitsRectOnUp(CircleShape circleShape, RectShape rectShape) {
+        if(circleShape.getPosX() + circleShape.getDiameter() > rectShape.getPosX()
+                && circleShape.getPosX() + circleShape.getDiameter() < rectShape.getPosX() + rectShape.getWidth()
+                && circleShape.getPosY() + circleShape.getDiameter() > rectShape.getPosY()
+                && circleShape.getPosY() + circleShape.getDiameter() < rectShape.getPosY() + rectShape.getHeight()) {
+            circleShape.setPosY(rectShape.getPosY() - circleShape.getDiameter());
             return true;
         }
         return false;
     }
 
-    private boolean ballHitsBrickOnRight(Ball ball, Brick brick) {
-        if(ball.getPosX() > brick.getPosX()
-                && ball.getPosX() < brick.getPosX() + brick.getWidth()
-                && ball.getPosY() > brick.getPosY()
-                && ball.getPosY() + ball.getDiameter() < brick.getPosY() + brick.getHeight()) {
-            ball.setPosX(brick.getPosX() + brick.getWidth());
+    private boolean circleHitsRectOnRight(CircleShape circleShape, RectShape rectShape) {
+        if(circleShape.getPosX() > rectShape.getPosX()
+                && circleShape.getPosX() < rectShape.getPosX() + rectShape.getWidth()
+                && circleShape.getPosY() > rectShape.getPosY()
+                && circleShape.getPosY() + circleShape.getDiameter() < rectShape.getPosY() + rectShape.getHeight()) {
+            circleShape.setPosX(rectShape.getPosX() + rectShape.getWidth());
             return true;
         }
         return false;
     }
 
-    private boolean ballHitsBrickOnLeft(Ball ball, Brick brick) {
-        if(ball.getPosX() + ball.getDiameter() > brick.getPosX()
-            && ball.getPosX() + ball.getDiameter() < brick.getPosX() + brick.getWidth()
-            && ball.getPosY() > brick.getPosY()
-            && ball.getPosY() + ball.getDiameter() < brick.getPosY() + brick.getHeight()) {
-            ball.setPosX(brick.getPosX() - ball.getDiameter());
+    private boolean circleHitsRectOnLeft(CircleShape circleShape, RectShape rectShape) {
+        if(circleShape.getPosX() + circleShape.getDiameter() > rectShape.getPosX()
+            && circleShape.getPosX() + circleShape.getDiameter() < rectShape.getPosX() + rectShape.getWidth()
+            && circleShape.getPosY() > rectShape.getPosY()
+            && circleShape.getPosY() + circleShape.getDiameter() < rectShape.getPosY() + rectShape.getHeight()) {
+            circleShape.setPosX(rectShape.getPosX() - circleShape.getDiameter());
             return true;
         }
         return false;

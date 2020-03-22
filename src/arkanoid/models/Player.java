@@ -5,12 +5,14 @@ public class Player {
     private int posY;
     private int width;
     private int height;
+    private int dirX;
 
-    public Player(int posX, int posY, int width, int height) {
+    public Player(int posX, int posY, int width, int height, int dirX) {
         this.posX = posX;
         this.posY = posY;
         this.width = width;
         this.height = height;
+        this.dirX = dirX;
     }
 
     public int getPosX() {
@@ -39,5 +41,13 @@ public class Player {
 
     public int getHeight() {
         return height;
+    }
+
+    public int getDirX() {
+        return dirX;
+    }
+
+    public void setDirX(int dirX) {
+        this.dirX = dirX;
     }
 }

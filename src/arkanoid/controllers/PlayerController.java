@@ -10,11 +10,11 @@ public class PlayerController {
     }
 
     public void moveLeft() {
-        this.player.setPosX(this.player.getPosX() - 15);
+        this.player.setPosX(this.player.getPosX() - this.player.getDirX());
     }
 
     public void moveRight() {
-        this.player.setPosX(this.player.getPosX() + 15);
+        this.player.setPosX(this.player.getPosX() + this.player.getDirX());
     }
 
     public Player getPlayer() {
