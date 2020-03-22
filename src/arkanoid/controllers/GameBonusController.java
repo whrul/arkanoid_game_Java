@@ -36,6 +36,7 @@ public class GameBonusController {
             default:
                 break;
         }
+//        System.out.println("Bonus code: " + gameBonus.getBonusCode() + " satatus: " + status);
         gameBonus.setUsed(true);
     }
 
@@ -83,10 +84,10 @@ public class GameBonusController {
 
     private void makePlayerLong(Player player, View view, boolean status) {
         if (status) {
-            if (player.getWidth() * 2 < view.getWidth()) {
+//            if (player.getWidth() * 2 < view.getWidth()) {
                 player.setPosX(player.getPosX() - player.getWidth() / 2);
                 player.setWidth(player.getWidth() * 2);
-            }
+//            }
         } else {
             this.makePlayerShort(player, view, true);
         }
@@ -95,10 +96,10 @@ public class GameBonusController {
 
     private void makePlayerShort(Player player, View view, boolean status) {
         if (status) {
-            if (player.getWidth() / 2 > 20) {
+//            if (player.getWidth() / 2 > 20) {
                 player.setPosX(player.getPosX() + player.getWidth() / 2);
                 player.setWidth(player.getWidth() / 2);
-            }
+//            }
         } else {
             this.makePlayerLong(player, view, true);
         }
