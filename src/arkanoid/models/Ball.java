@@ -7,14 +7,6 @@ public class Ball implements CircleShape {
     private int dirX;
     private int dirY;
 
-    public Ball(int radius, int posX, int posY) {
-        this.radius = radius;
-        this.posX = posX;
-        this.posY = posY;
-        this.dirX = 0;
-        this.dirY = 0;
-    }
-
     public Ball(int radius, int posX, int posY, int dirX, int dirY) {
         this.radius = radius;
         this.posX = posX;

@@ -16,8 +16,8 @@ public class Game {
         this.bricks = new Vector<Brick>();
         this.balls = new Vector<Ball>();
         this.gameBonuses = new Vector<GameBonus>();
-        this.scores = 0;
-        this.lives = 100;
+        this.scores = GameConstants.getScores();
+        this.lives = GameConstants.getLives();
     }
 
     public Player getPlayer() {

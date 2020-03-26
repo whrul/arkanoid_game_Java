@@ -43,27 +43,27 @@ public class MainController {
 
         this.resetPlayerAttributes();
 
-        this.gameController.addBall(new Ball(8, this.view.getWidth() / 2, this.view.getHeight() / 2, -5, -5));
+        this.gameController.addBall(new Ball(GameConstants.getBallRadius(), this.view.getWidth() / 2, this.view.getHeight() / 2, GameConstants.getBallDirX(), GameConstants.getBallDirY()));
 
         this.addBricks();
 
 //        JOptionPane.showMessageDialog(null, "Let's start it");
 //        Toolkit.getDefaultToolkit().beep();
 
-        this.timer = new Timer(15, new GameCycle());
+        this.timer = new Timer(GameConstants.getMainTimerDelay(), new GameCycle());
         this.timer.restart();
 
-        this.addingBonusTimer = new Timer(3000, new BonusCycle());
+        this.addingBonusTimer = new Timer(GameConstants.getBonusAppearTimerDelay(), new BonusCycle());
         this.addingBonusTimer.restart();
     }
 
     private void addBricks() {
         Random random = new Random();
-        int ammountOfBricksInX = this.view.getWidth() / 100;
-        int ammoOfBricksInY = this.view.getHeight() / 3 * 1 / 30;
+        int ammountOfBricksInX = this.view.getWidth() / GameConstants.getBrickWidth();
+        int ammoOfBricksInY = this.view.getHeight() / 3 * 1 / GameConstants.getBrickHeight();
         for (int i = 0 ; i < ammountOfBricksInX; ++i) {
             for (int j = 0; j < ammoOfBricksInY; ++j) {
-                this.gameController.addBrick(new Brick((i + 1) * 10 + i * 100, (j + 1) * 10 + j * 30, 100, 30, random.nextInt(3) + 1));
+                this.gameController.addBrick(new Brick((i + 1) * GameConstants.getBrickMargin() + i * GameConstants.getBrickWidth(), (j + 1) * GameConstants.getBrickMargin() + j * GameConstants.getBrickHeight(), GameConstants.getBrickWidth(), GameConstants.getBrickHeight(), random.nextInt(3) + 1));
             }
         }
     }
@@ -120,8 +120,8 @@ public class MainController {
     private void doBonusStuff() {
         Random random = new Random();
         if (random.nextBoolean()) {
-            int sizeOfSide = 30 + random.nextInt(15);
-            GameBonus gameBonus = new GameBonus(random.nextInt(this.view.getWidth()), random.nextInt(this.getPlayer().getPosY() - sizeOfSide),  sizeOfSide, sizeOfSide, Arrays.asList(BonusEnum.values()).get(random.nextInt(BonusEnum.values().length)));
+            int sizeOfSide = GameConstants.getMinSideOfBonus() + random.nextInt(GameConstants.getMaxSideOFBonus() - GameConstants.getMinSideOfBonus());
+            GameBonus gameBonus = new GameBonus(random.nextInt(this.view.getWidth() - sizeOfSide), random.nextInt(this.getPlayer().getPosY() - sizeOfSide),  sizeOfSide, sizeOfSide, Arrays.asList(BonusEnum.values()).get(random.nextInt(BonusEnum.values().length)));
             this.gameController.addGameBonus(gameBonus);
             this.gameBonuses.add(new GameBonusTimer(gameBonus));
         }
@@ -160,17 +160,17 @@ public class MainController {
                 this.timer.stop();
             } else {
                 this.resetPlayerAttributes();
-                this.gameController.addBall(new Ball(8, this.view.getWidth() / 2, this.view.getHeight() / 2, -5, -5));
+                this.gameController.addBall(new Ball(GameConstants.getBallRadius(), this.view.getWidth() / 2, this.view.getHeight() / 2, GameConstants.getBallDirX(), GameConstants.getBallDirY()));
             }
         }
     }
 
     private void resetPlayerAttributes() {
-        this.gameController.getPlayer().setWidth(125);
-        this.gameController.getPlayer().setHeight(20);
-        this.gameController.getPlayer().setDirX(15);
+        this.gameController.getPlayer().setWidth(GameConstants.getPlayerWidth());
+        this.gameController.getPlayer().setHeight(GameConstants.getPlayerHeight());
+        this.gameController.getPlayer().setDirX(GameConstants.getPlayerDirX());
         this.gameController.getPlayer().setPosX(this.view.getWidth() / 2 - this.gameController.getPlayer().getWidth() / 2);
-        this.gameController.getPlayer().setPosY(this.view.getHeight() - this.gameController.getPlayer().getHeight() - 50);
+        this.gameController.getPlayer().setPosY(this.view.getHeight() - this.gameController.getPlayer().getHeight() * 3);
     }
 
 
@@ -233,13 +233,13 @@ public class MainController {
             if (this.circleHitsRectOnLeft(ball, bricks.get(i)) || this.circleHitsRectOnRight(ball, bricks.get(i))) {
                 this.ballController.reverseXDir(ball);
                 if (this.brickController.getDamaged(bricks.get(i)) == 0) {
-                    this.gameController.addScores(100 * bricks.get(i).getHitsForDestroyingStartVal());
+                    this.gameController.addScores(GameConstants.getPointsForOneHit() * bricks.get(i).getHitsForDestroyingStartVal());
                     this.gameController.destroyBrick(bricks.get(i));
                 }
             } else if (this.circleHitsRectOnUp(ball, bricks.get(i)) || this.circleHitsRectOnDown(ball, bricks.get(i))) {
                 this.ballController.reverseYDir(ball);
                 if (this.brickController.getDamaged(bricks.get(i)) == 0) {
-                    this.gameController.addScores(100 * bricks.get(i).getHitsForDestroyingStartVal());
+                    this.gameController.addScores(GameConstants.getPointsForOneHit() * bricks.get(i).getHitsForDestroyingStartVal());
                     this.gameController.destroyBrick(bricks.get(i));
                 }
             }
@@ -303,14 +303,10 @@ public class MainController {
 
     public void keyPressed(KeyEvent keyEvent) {
         if(Character.toUpperCase(keyEvent.getKeyChar()) == 'A') {
-//            this.playerController.moveLeft();
             this.aPressed = true;
         } else if(Character.toUpperCase(keyEvent.getKeyChar()) == 'D') {
-//            this.playerController.moveRight();
             this.dPressed = true;
         }
-//        this.checkPlayerPosition();
-//        this.view.updateView();
     }
 
     public void keyReleased(KeyEvent keyEvent) {
@@ -339,7 +335,7 @@ public class MainController {
 
         public GameBonusTimer(GameBonus gameBonus) {
             this.gameBonus = gameBonus;
-            this.timeForDestroying = new Timer(15000, new EndOfBonusCycle(this));
+            this.timeForDestroying = new Timer(GameConstants.getBonusDestroyTimerDelay(), new EndOfBonusCycle(this));
             this.timeForDestroying.restart();
         }
 

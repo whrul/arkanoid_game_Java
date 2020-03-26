@@ -38,7 +38,6 @@ public class GameBonusController {
             default:
                 break;
         }
-//        System.out.println("Bonus code: " + gameBonus.getBonusCode() + " satatus: " + status);
         gameBonus.setUsed(true);
     }
 
