@@ -114,11 +114,12 @@ public class SwingView extends JPanel implements View, KeyListener {
 
     private void drawScene(Graphics graphics) {
 //        fillBackground(graphics);
-        drawBall(graphics);
-        drawPlayer(graphics);
         drawGameBonuses(graphics);
+        drawBall(graphics);
         drawBricks(graphics);
+        drawPlayer(graphics);
         drawActiveGameBonuses(graphics);
+
         updateScores();
         updateLives();
     }
@@ -127,7 +128,7 @@ public class SwingView extends JPanel implements View, KeyListener {
         Vector<MainController.GameBonusTimer> gameBonusTimers = this.mainController.getGameBonusTimers();
         for (int i = 0; i < gameBonusTimers.size(); ++i) {
             if (gameBonusTimers.get(i).bonusIsActive()) {
-                graphics.setColor(this.colors.get(gameBonusTimers.get(i).getBonusCode() % this.colors.size()));
+                graphics.setColor(this.colors.get(gameBonusTimers.get(i).getGameBonus().getBonusEnum().getIntRepr() % this.colors.size()));
                 graphics.fillRect(50 + 40 * i, this.height - 75, 20, 20 );
             }
         }
@@ -136,7 +137,7 @@ public class SwingView extends JPanel implements View, KeyListener {
     private void drawGameBonuses(Graphics graphics) {
         Vector<GameBonus> gameBonuses = this.mainController.getGameBonuses();
         for (GameBonus gameBonus : gameBonuses) {
-            graphics.setColor(this.colors.get(gameBonus.getBonusCode() % this.colors.size()));
+            graphics.setColor(this.colors.get(gameBonus.getBonusEnum().getIntRepr() % this.colors.size()));
             graphics.fillRoundRect(gameBonus.getPosX(), gameBonus.getPosY(), gameBonus.getWidth(), gameBonus.getHeight(), gameBonus.getWidth() / 2, gameBonus.getHeight() / 2);
         }
     }

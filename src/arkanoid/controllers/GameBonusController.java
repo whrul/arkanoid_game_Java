@@ -9,28 +9,30 @@ import arkanoid.views.View;
 import java.util.Vector;
 
 public class GameBonusController {
-    private int numOfDiffBon = 7;
+    public GameBonusController() {
+
+    }
     public void makeActive(GameBonus gameBonus, Player player, Vector<Ball> balls, Vector<Brick> bricks, View view, boolean status) {
-        switch(gameBonus.getBonusCode() % this.numOfDiffBon) {
-            case 0:
-                this.makePlayerShort(player, view, status);
+        switch(gameBonus.getBonusEnum()) {
+            case SHORT_PLAYER:
+                this.makePlayerShorter(player, status);
                 break;
-            case 1:
-                this.makePlayerLong(player, view, status);
+            case LONG_PLAYER:
+                this.makePlayerLonger(player, view, status);
                 break;
-            case 2:
+            case MULTI_BALLS:
                 this.multiplyBalls(balls, status);
                 break;
-            case 3:
+            case HIGH_SPEED_BALLS:
                 this.increaseBallSpeed(balls, status);
                 break;
-            case 4:
+            case LOW_SPEED_PLAYER:
                 this.decreasePlayerSpeed(player, status);
                 break;
-            case 5:
+            case HIGH_SPEED_PLAYER:
                 this.increasePlayerSpeed(player, status);
                 break;
-            case 6:
+            case MOVE_PLAYER_UP:
                 this.movePlayerUp(player, status);
                 break;
             default:
@@ -42,17 +44,18 @@ public class GameBonusController {
 
     private void movePlayerUp(Player player, boolean status) {
         if (status) {
-            player.setPosY(player.getPosY() - player.getHeight());
+            player.setPosY(player.getPosY() - player.getHeight() * 2);
         } else {
-            player.setPosY(player.getPosY() + player.getHeight());
+            player.setPosY(player.getPosY() + player.getHeight() * 2);
         }
+
     }
 
     private void increasePlayerSpeed(Player player, boolean status) {
         if (status) {
             player.setDirX(player.getDirX() * 2);
         } else {
-            this.decreasePlayerSpeed(player, true);
+            player.setDirX(player.getDirX() / 2);
         }
     }
 
@@ -60,7 +63,7 @@ public class GameBonusController {
         if (status) {
             player.setDirX(player.getDirX() / 2);
         } else {
-            this.increasePlayerSpeed(player, true);
+            player.setDirX(player.getDirX() * 2);
         }
     }
 
@@ -78,36 +81,32 @@ public class GameBonusController {
 
     private void multiplyBalls(Vector<Ball> balls, boolean status) {
         if (status) {
-            balls.add(new Ball(8, 600, 300, -4, -5));
+            int ammount = balls.size();
+            for (int i = 0; i < ammount; ++i) {
+                balls.add(new Ball(balls.get(i).getRadius(), balls.get(i).getPosX(), balls.get(i).getPosY(), -balls.get(i).getDirX(), balls.get(i).getDirY()));
+            }
         }
     }
 
-    private void makePlayerLong(Player player, View view, boolean status) {
+    private void makePlayerLonger(Player player, View view, boolean status) {
         if (status) {
-//            if (player.getWidth() * 2 < view.getWidth()) {
-                player.setPosX(player.getPosX() - player.getWidth() / 2);
-                player.setWidth(player.getWidth() * 2);
-//            }
+            player.setPosX(player.getPosX() - player.getWidth() / 2);
+            player.setWidth(player.getWidth() * 2);
         } else {
-            this.makePlayerShort(player, view, true);
+            player.setWidth(player.getWidth() / 2);
+            player.setPosX(player.getPosX() + player.getWidth() / 2);
         }
-
     }
 
-    private void makePlayerShort(Player player, View view, boolean status) {
+    private void makePlayerShorter(Player player, boolean status) {
         if (status) {
-//            if (player.getWidth() / 2 > 20) {
-                player.setPosX(player.getPosX() + player.getWidth() / 2);
-                player.setWidth(player.getWidth() / 2);
-//            }
+            player.setWidth(player.getWidth() / 2);
+            player.setPosX(player.getPosX() + player.getWidth() / 2);
         } else {
-            this.makePlayerLong(player, view, true);
+            player.setPosX(player.getPosX() - player.getWidth() / 2);
+            player.setWidth(player.getWidth() * 2);
         }
-
     }
 
-    public int getNumOfDiffBon() {
-        return numOfDiffBon;
-    }
 
 }

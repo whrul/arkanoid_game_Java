@@ -5,15 +5,15 @@ public class GameBonus implements RectShape {
     private int posY;
     private int width;
     private int height;
-    private int bonusCode;
+    private BonusEnum bonusEnum;
     private boolean used;
 
-    public GameBonus(int posX, int posY, int width, int height, int bonusCode) {
+    public GameBonus(int posX, int posY, int width, int height, BonusEnum bonusEnum) {
         this.posX = posX;
         this.posY = posY;
         this.width = width;
         this.height = height;
-        this.bonusCode = bonusCode;
+        this.bonusEnum = bonusEnum;
         this.used = false;
     }
 
@@ -53,8 +53,8 @@ public class GameBonus implements RectShape {
         return height;
     }
 
-    public int getBonusCode() {
-        return bonusCode;
+    public BonusEnum getBonusEnum() {
+        return bonusEnum;
     }
 
 }

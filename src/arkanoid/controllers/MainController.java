@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.Vector;
 
@@ -27,7 +28,7 @@ public class MainController {
     public MainController() {
         this.ballController = new BallController();
         this.brickController = new BrickController();
-        this.playerController = new PlayerController(new Player(0, 0, 125, 20, 15));
+        this.playerController = new PlayerController(new Player());
         this.gameController = new GameController(new Game(this.playerController.getPlayer()));
         this.gameBonusController = new GameBonusController();
         this.gameBonuses = new Vector<GameBonusTimer>();
@@ -40,12 +41,14 @@ public class MainController {
 
     private void finishSetUp() {
 
-        this.gameController.getPlayer().setPosX(this.view.getWidth() / 2 - this.gameController.getPlayer().getWidth() / 2);
-        this.gameController.getPlayer().setPosY(this.view.getHeight() - this.gameController.getPlayer().getHeight() - 50);
+        this.resetPlayerAttributes();
 
         this.gameController.addBall(new Ball(8, this.view.getWidth() / 2, this.view.getHeight() / 2, -5, -5));
 
         this.addBricks();
+
+//        JOptionPane.showMessageDialog(null, "Let's start it");
+//        Toolkit.getDefaultToolkit().beep();
 
         this.timer = new Timer(15, new GameCycle());
         this.timer.restart();
@@ -118,8 +121,7 @@ public class MainController {
         Random random = new Random();
         if (random.nextBoolean()) {
             int sizeOfSide = 30 + random.nextInt(15);
-            GameBonus gameBonus = new GameBonus(random.nextInt(this.view.getWidth()), random.nextInt(this.getPlayer().getPosY() - sizeOfSide),  sizeOfSide, sizeOfSide, random.nextInt(this.gameBonusController.getNumOfDiffBon()));
-//            GameBonus gameBonus = new GameBonus(random.nextInt(this.view.getWidth()), random.nextInt(this.getPlayer().getPosY() - sizeOfSide),  sizeOfSide, sizeOfSide, 3);
+            GameBonus gameBonus = new GameBonus(random.nextInt(this.view.getWidth()), random.nextInt(this.getPlayer().getPosY() - sizeOfSide),  sizeOfSide, sizeOfSide, Arrays.asList(BonusEnum.values()).get(random.nextInt(BonusEnum.values().length)));
             this.gameController.addGameBonus(gameBonus);
             this.gameBonuses.add(new GameBonusTimer(gameBonus));
         }
@@ -137,31 +139,42 @@ public class MainController {
        if (this.dPressed) {
            this.playerController.moveRight();
        }
-
-       this.moveBalls();
-
        this.checkPlayerPosition();
 
-       if (this.gameController.getBalls().isEmpty()) {
-           for (GameBonusTimer gameBonusTimer : this.gameBonuses) {
-               gameBonusTimer.timeForDestroying.stop();
-               if (gameBonusTimer.gameBonus.isUsed()) {
-                   this.gameBonusController.makeActive(gameBonusTimer.gameBonus, this.gameController.getPlayer(), this.gameController.getBalls(), this.gameController.getBricks(), this.view, false);
-               }
-           }
-           this.gameController.getGameBonuses().clear();
-           this.gameBonuses.clear();
-
-
-           if (this.gameController.decreaseLives() == 0) {
-               this.timer.stop();
-           } else {
-               this.gameController.addBall(new Ball(8, this.view.getWidth() / 2, this.view.getHeight() / 2, -5, -5));
-           }
-       }
+       this.moveBallsAndActivateBonuses();
+       this.checkForGameOver();
     }
 
-    private void moveBalls() {
+    private void checkForGameOver() {
+
+        if (this.gameController.getBalls().isEmpty() || this.gameController.getPlayer().getWidth() == 0 ||  this.gameController.getPlayer().getDirX() == 0) {
+            this.gameController.getBalls().clear();
+            for (GameBonusTimer gameBonusTimer : this.gameBonuses) {
+                gameBonusTimer.timeForDestroying.stop();
+            }
+            this.gameController.getGameBonuses().clear();
+            this.gameBonuses.clear();
+
+
+            if (this.gameController.decreaseLives() == 0) {
+                this.timer.stop();
+            } else {
+                this.resetPlayerAttributes();
+                this.gameController.addBall(new Ball(8, this.view.getWidth() / 2, this.view.getHeight() / 2, -5, -5));
+            }
+        }
+    }
+
+    private void resetPlayerAttributes() {
+        this.gameController.getPlayer().setWidth(125);
+        this.gameController.getPlayer().setHeight(20);
+        this.gameController.getPlayer().setDirX(15);
+        this.gameController.getPlayer().setPosX(this.view.getWidth() / 2 - this.gameController.getPlayer().getWidth() / 2);
+        this.gameController.getPlayer().setPosY(this.view.getHeight() - this.gameController.getPlayer().getHeight() - 50);
+    }
+
+
+    private void moveBallsAndActivateBonuses() {
         Vector<Ball> balls = this.gameController.getBalls();
         for (int i = balls.size() - 1; i >= 0; --i) {
             this.ballController.move(balls.get(i));
@@ -334,8 +347,8 @@ public class MainController {
             return this.gameBonus.isUsed();
         }
 
-        public int getBonusCode() {
-            return this.gameBonus.getBonusCode();
+        public GameBonus getGameBonus() {
+            return this.gameBonus;
         }
     }
 
