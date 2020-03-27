@@ -20,7 +20,7 @@ public class GameConstants {
     private static int playerHeight = 20;
     private static int playerDirX = 15;
 
-    private static int lives = 1;
+    private static int lives = 10;
     private static int scores = 0;
 
     private static int pointsForOneHit = 100;

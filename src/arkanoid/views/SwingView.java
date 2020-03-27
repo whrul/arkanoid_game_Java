@@ -10,7 +10,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.util.Vector;
 
-public class SwingView extends JPanel implements View, KeyListener {
+public class SwingView extends JPanel implements View {
 
     private MainController mainController;
     private int width;
@@ -47,6 +47,24 @@ public class SwingView extends JPanel implements View, KeyListener {
 
         this.colors = new Vector<Color>();
         this.addMainColors();
+
+        this.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent keyEvent) {
+                mainController.keyTyped(keyEvent);
+            }
+
+            @Override
+            public void keyPressed(KeyEvent keyEvent) {
+                mainController.keyPressed(keyEvent);
+            }
+
+            @Override
+            public void keyReleased(KeyEvent keyEvent) {
+                mainController.keyReleased(keyEvent);
+
+            }
+        });
 
     }
 
@@ -94,7 +112,6 @@ public class SwingView extends JPanel implements View, KeyListener {
         this.add(this.lives);
 
         this.setFocusable(true);
-        this.addKeyListener(this);
     }
 
     private void setUpJFrame() {
@@ -142,21 +159,6 @@ public class SwingView extends JPanel implements View, KeyListener {
     @Override
     public void closeView() {
         this.jFrame.dispatchEvent(new WindowEvent(this.jFrame, WindowEvent.WINDOW_CLOSING));
-    }
-
-    @Override
-    public void keyTyped(KeyEvent keyEvent) {
-        this.mainController.keyTyped(keyEvent);
-    }
-
-    @Override
-    public void keyPressed(KeyEvent keyEvent) {
-        this.mainController.keyPressed(keyEvent);
-    }
-
-    @Override
-    public void keyReleased(KeyEvent keyEvent) {
-        this.mainController.keyReleased(keyEvent);
     }
 
     @Override
