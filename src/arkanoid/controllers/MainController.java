@@ -73,10 +73,17 @@ public class MainController {
     private void addBricks() {
         Random random = new Random();
         int ammountOfBricksInX = this.view.getWidth() / GameConstants.getBrickWidth();
-        int ammoOfBricksInY = this.view.getHeight() / 3 * 1 / GameConstants.getBrickHeight();
+        int ammoOfBricksInY = this.view.getHeight() / GameConstants.getBrickHeight() / 3;
+        int rightSideOfBrick = 0;
         for (int i = 0 ; i < ammountOfBricksInX; ++i) {
             for (int j = 0; j < ammoOfBricksInY; ++j) {
-                this.gameController.addBrick(new Brick((i + 1) * GameConstants.getBrickMargin() + i * GameConstants.getBrickWidth(), (j + 1) * GameConstants.getBrickMargin() + j * GameConstants.getBrickHeight(), GameConstants.getBrickWidth(), GameConstants.getBrickHeight(), random.nextInt(3) + 1));
+                if (random.nextBoolean()) {
+                    rightSideOfBrick = (i + 1) * GameConstants.getBrickMargin() + i * GameConstants.getBrickWidth() + GameConstants.getBrickWidth();
+                    if (rightSideOfBrick > this.view.getWidth()) {
+                        continue;
+                    }
+                    this.gameController.addBrick(new Brick((i + 1) * GameConstants.getBrickMargin() + i * GameConstants.getBrickWidth(), (j + 1) * GameConstants.getBrickMargin() + j * GameConstants.getBrickHeight(), GameConstants.getBrickWidth(), GameConstants.getBrickHeight(), random.nextInt(this.gameController.getLevel() + 1) + 1));
+                }
             }
         }
     }
@@ -123,7 +130,44 @@ public class MainController {
        this.checkPlayerPosition();
 
        this.moveBallsAndActivateBonuses();
-       this.checkForGameOver();
+        this.checkForLevelComplete();
+        this.checkForGameOver();
+    }
+
+    private void checkForLevelComplete() {
+        if (this.gameController.getBricks().isEmpty()) {
+            this.stopTimers();
+            this.gameController.setGameStatusEnum(GameStatusEnum.LEVEL_COMPLETE);
+            this.updateImage();
+            new Timer(GameConstants.getLevelCompleteScreenDuration(), new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent actionEvent) {
+                    levelUp();
+                    ((Timer)actionEvent.getSource()).stop();
+                }
+            }).start();
+
+        }
+    }
+
+    private void levelUp() {
+        this.stopTimers();
+
+        this.gameController.getBricks().clear();
+        this.gameController.getBalls().clear();
+        this.gameController.getGameBonuses().clear();
+        this.gameBonusTimers.clear();
+
+        this.resetPlayerAttributes();
+
+
+        this.gameController.setLevel(this.gameController.getLevel() + 1);
+        this.addBricks();
+        this.addStartBall();
+
+        this.gameController.setGameStatusEnum(GameStatusEnum.GAME_IS_ON);
+
+        this.runTimers();
     }
 
     private void checkForGameOver() {
@@ -141,7 +185,7 @@ public class MainController {
                 this.stopTimers();
                 this.gameController.setGameStatusEnum(GameStatusEnum.GAME_IS_OVER);
                 this.updateImage();
-                new Timer(3500, new ActionListener() {
+                new Timer(GameConstants.getGameOverScreenDuration(), new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent actionEvent) {
                         gameController.setGameStatusEnum(GameStatusEnum.GAME_IS_START);
@@ -400,6 +444,10 @@ public class MainController {
 
     public Vector<Brick> getBricks() {
         return this.gameController.getBricks();
+    }
+
+    public int getLevel() {
+        return this.gameController.getLevel();
     }
 
     public class GameBonusTimer {

@@ -76,5 +76,15 @@ public class GameController {
 
         this.game.setScores(GameConstants.getScores());
         this.game.setLives(GameConstants.getLives());
+        this.game.setLevel(GameConstants.getLevel());
     }
+
+    public int getLevel() {
+        return this.game.getLevel();
+    }
+
+    public void setLevel(int level) {
+        this.game.setLevel(level);
+    }
+
 }

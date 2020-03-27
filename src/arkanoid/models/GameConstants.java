@@ -4,6 +4,8 @@ public class GameConstants {
     private static int mainTimerDelay = 15;
     private static int bonusAppearTimerDelay = 3000;
     private static int bonusDestroyTimerDelay = 15000;
+    private static int levelCompleteScreenDuration = 2000;
+    private static int gameOverScreenDuration = 3500;
 
     private static int ballRadius = 8;
     private static int ballDirX = -5;
@@ -20,8 +22,9 @@ public class GameConstants {
     private static int playerHeight = 20;
     private static int playerDirX = 15;
 
-    private static int lives = 10;
+    private static int lives = 100;
     private static int scores = 0;
+    private static int level = 1;
 
     private static int pointsForOneHit = 100;
 
@@ -91,5 +94,17 @@ public class GameConstants {
 
     public static int getScores() {
         return scores;
+    }
+
+    public static int getLevel() {
+        return level;
+    }
+
+    public static int getLevelCompleteScreenDuration() {
+        return levelCompleteScreenDuration;
+    }
+
+    public static int getGameOverScreenDuration() {
+        return gameOverScreenDuration;
     }
 }

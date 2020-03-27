@@ -22,8 +22,10 @@ public class SwingView extends JPanel implements View {
 
     private JLabel scores;
     private JLabel lives;
+    private JLabel level;
     private JLabel gameOver;
     private JLabel gameOverScores;
+    private JLabel levelComplete;
 
     private Vector<Color> colors;
 
@@ -40,6 +42,7 @@ public class SwingView extends JPanel implements View {
         this.createGameLabels();
 
         this.prepareGameOverScreen();
+        this.prepareLevelCompleteScreen();
 
         this.setUpJFrame();
         this.setUpPanel();
@@ -66,6 +69,12 @@ public class SwingView extends JPanel implements View {
             }
         });
 
+    }
+
+    private void prepareLevelCompleteScreen() {
+        levelComplete = new JLabel("LEVEL COMPLETE");
+        levelComplete.setFont(new Font("TimesRoman", Font.BOLD, 65));
+        levelComplete.setForeground(Color.WHITE);
     }
 
     private void prepareGameOverScreen() {
@@ -95,6 +104,10 @@ public class SwingView extends JPanel implements View {
         this.lives = new JLabel("Lives: " + this.mainController.getLives());
         this.lives.setFont(new Font("TimesRoman", Font.BOLD, 25));
         this.lives.setForeground(Color.white);
+
+        this.level = new JLabel("Level: " + this.mainController.getLevel());
+        this.level.setFont(new Font("TimesRoman", Font.BOLD, 25));
+        this.level.setForeground(Color.white);
     }
 
 
@@ -110,6 +123,7 @@ public class SwingView extends JPanel implements View {
 
         this.add(this.scores);
         this.add(this.lives);
+        this.add(this.level);
 
         this.setFocusable(true);
     }
@@ -171,9 +185,17 @@ public class SwingView extends JPanel implements View {
             this.drawMenu(graphics);
         } else if (this.mainController.getGameStatusEnum() == GameStatusEnum.GAME_IS_OVER) {
             this.drawGameOverScreen(graphics);
+        } else if (this.mainController.getGameStatusEnum() == GameStatusEnum.LEVEL_COMPLETE) {
+            this.drawLevelCompleteScreen(graphics);
         }
 //
         Toolkit.getDefaultToolkit().sync();
+    }
+
+    private void drawLevelCompleteScreen(Graphics graphics) {
+        levelComplete.setText("LEVEL " + this.mainController.getLevel() + " COMPLETE");
+        levelComplete.setBounds(this.width / 2 - levelComplete.getPreferredSize().width / 2 , this.height / 2 - levelComplete.getPreferredSize().height * 3 / 2, levelComplete.getPreferredSize().width, levelComplete.getPreferredSize().height);
+        this.add(levelComplete);
     }
 
     private void drawGameOverScreen(Graphics graphics) {
@@ -188,12 +210,14 @@ public class SwingView extends JPanel implements View {
     private void hideGameLabels() {
         this.remove(this.scores);
         this.remove(this.lives);
+        this.remove(this.level);
     }
 
     private void drawScene(Graphics graphics) {
         hideMenuLabels();
         this.remove(this.gameOver);
         this.remove(this.gameOverScores);
+        this.remove(this.levelComplete);
 //
         updateGameLabels();
         drawGameBonuses(graphics);
@@ -208,10 +232,14 @@ public class SwingView extends JPanel implements View {
         this.scores.setBounds(5, 5, this.scores.getPreferredSize().width, this.scores.getPreferredSize().height);
 //
         this.lives.setText("Lives: " + this.mainController.getLives());
-        this.lives.setBounds(5, 5 + this.scores.getPreferredSize().height, this.lives.getPreferredSize().width, this.lives.getPreferredSize().height);
+        this.lives.setBounds(5, 5 + this.lives.getPreferredSize().height, this.lives.getPreferredSize().width, this.lives.getPreferredSize().height);
+
+        this.level.setText("Level: " + this.mainController.getLevel());
+        this.level.setBounds(5, 5 + this.scores.getPreferredSize().height + this.lives.getPreferredSize().height, this.level.getPreferredSize().width, this.level.getPreferredSize().height);
 
         this.add(this.scores);
         this.add(this.lives);
+        this.add(this.level);
     }
 
     private void hideMenuLabels() {
