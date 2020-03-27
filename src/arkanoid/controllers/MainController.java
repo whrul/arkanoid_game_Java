@@ -25,6 +25,9 @@ public class MainController {
     private Timer addingBonusTimer;
     private Vector<GameBonusTimer> gameBonuses;
 
+    private Vector<String> menuTexts;
+    private int menuPos = 1;
+
     public MainController() {
         this.ballController = new BallController();
         this.brickController = new BrickController();
@@ -35,6 +38,12 @@ public class MainController {
 
         this.timer = new Timer(GameConstants.getMainTimerDelay(), new GameCycle());
         this.addingBonusTimer = new Timer(GameConstants.getBonusAppearTimerDelay(), new BonusCycle());
+
+        this.menuTexts = new Vector<String>();
+        this.menuTexts.add("CONTINUE");
+        this.menuTexts.add("NEW GAME");
+        this.menuTexts.add("EXIT");
+        this.menuPos = 1;
     }
 
     public void setView(View view) {
@@ -330,8 +339,28 @@ public class MainController {
                 this.runTimers();
             }
         } else if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
-            if (this.gameController.getGameStatusEnum() == GameStatusEnum.GAME_IS_OVER || this.gameController.getGameStatusEnum() == GameStatusEnum.GAME_IS_START) {
-                this.restartTheGame();
+            GameStatusEnum gameStatusEnum = this.gameController.getGameStatusEnum();
+            if (gameStatusEnum == GameStatusEnum.GAME_IS_OVER || gameStatusEnum == GameStatusEnum.GAME_IS_START || gameStatusEnum == GameStatusEnum.GAME_IS_PAUSE) {
+                if (this.menuPos == 1) {
+                    this.restartTheGame();
+                } else if (this.menuPos == 0 && gameStatusEnum == GameStatusEnum.GAME_IS_PAUSE) {
+                    this.gameController.setGameStatusEnum(GameStatusEnum.GAME_IS_ON);
+                    this.runTimers();
+                } else if (this.menuPos == 2) {
+                    this.view.closeView();
+                }
+            }
+        } else if (keyEvent.getKeyCode() == KeyEvent.VK_DOWN) {
+            GameStatusEnum gameStatusEnum = this.gameController.getGameStatusEnum();
+            if (gameStatusEnum == GameStatusEnum.GAME_IS_OVER || gameStatusEnum == GameStatusEnum.GAME_IS_START || gameStatusEnum == GameStatusEnum.GAME_IS_PAUSE) {
+                this.menuPos = Math.min(++this.menuPos, this.menuTexts.size() - 1);
+                this.updateImage();
+            }
+        } else if (keyEvent.getKeyCode() == KeyEvent.VK_UP) {
+            GameStatusEnum gameStatusEnum = this.gameController.getGameStatusEnum();
+            if (gameStatusEnum == GameStatusEnum.GAME_IS_OVER || gameStatusEnum == GameStatusEnum.GAME_IS_START || gameStatusEnum == GameStatusEnum.GAME_IS_PAUSE) {
+                this.menuPos = Math.max(--this.menuPos, 0);
+                this.updateImage();
             }
         }
     }
@@ -414,5 +443,13 @@ public class MainController {
 
     public GameStatusEnum getGameStatusEnum() {
         return this.gameController.getGameStatusEnum();
+    }
+
+    public Vector<String> getMenuTexts() {
+        return menuTexts;
+    }
+
+    public int getMenuPos() {
+        return menuPos;
     }
 }

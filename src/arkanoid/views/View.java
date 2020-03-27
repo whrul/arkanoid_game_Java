@@ -7,4 +7,5 @@ public interface View {
     void updateView();
     int getWidth();
     int getHeight();
+    void closeView();
 }

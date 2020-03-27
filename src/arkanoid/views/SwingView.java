@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowEvent;
 import java.util.Vector;
 
 public class SwingView extends JPanel implements View, KeyListener {
@@ -18,12 +19,13 @@ public class SwingView extends JPanel implements View, KeyListener {
     private JFrame jFrame;
 
     private Vector<JLabel> menuLabels;
-    private Vector<String> menuTexts;
 
     private JLabel scores;
     private JLabel lives;
 
     private Vector<Color> colors;
+
+    private int prevMenuPos = -1;
 
     public SwingView(int width, int height, MainController mainController) {
         super();
@@ -32,7 +34,6 @@ public class SwingView extends JPanel implements View, KeyListener {
         this.height = height;
         this.mainController = mainController;
 
-        this.createMenuTexts();
         this.createMenuLabels();
         this.createGameLabels();
 
@@ -46,19 +47,13 @@ public class SwingView extends JPanel implements View, KeyListener {
     }
 
     private void createMenuLabels() {
+        Vector<String> menuTexts = this.mainController.getMenuTexts();
         this.menuLabels = new Vector<JLabel>();
-        for (int i = 0; i < this.menuTexts.size(); ++i) {
-            this.menuLabels.add(new JLabel(this.menuTexts.get(i)));
+        for (int i = 0; i < menuTexts.size(); ++i) {
+            this.menuLabels.add(new JLabel(menuTexts.get(i)));
             this.menuLabels.lastElement().setFont(new Font("TimesRoman", Font.BOLD, 55));
-            this.menuLabels.lastElement().setForeground(Color.white);
+            this.menuLabels.lastElement().setForeground(Color.LIGHT_GRAY);
         }
-    }
-
-    private void createMenuTexts() {
-        this.menuTexts = new Vector<String>();
-        this.menuTexts.add("CONTINUE");
-        this.menuTexts.add("NEW GAME");
-        this.menuTexts.add("EXIT");
     }
 
     private void createGameLabels() {
@@ -132,6 +127,11 @@ public class SwingView extends JPanel implements View, KeyListener {
     }
 
     @Override
+    public void closeView() {
+        this.jFrame.dispatchEvent(new WindowEvent(this.jFrame, WindowEvent.WINDOW_CLOSING));
+    }
+
+    @Override
     public void keyTyped(KeyEvent keyEvent) {
         this.mainController.keyTyped(keyEvent);
     }
@@ -202,7 +202,19 @@ public class SwingView extends JPanel implements View, KeyListener {
     private void drawMenu(Graphics graphics) {
         this.showMenuLabels();
         for (int i = 0; i < this.menuLabels.size(); ++i) {
-            menuLabels.get(i).setBounds(this.width / 2 - menuLabels.get(i).getPreferredSize().width / 2 , this.height / 2 - menuLabels.get(i).getPreferredSize().height / 2 + (menuLabels.get(i).getPreferredSize().height * (i - menuTexts.size() / 2)), menuLabels.get(i).getPreferredSize().width, menuLabels.get(i).getPreferredSize().height);
+            menuLabels.get(i).setBounds(this.width / 2 - menuLabels.get(i).getPreferredSize().width / 2 , this.height / 2 - menuLabels.get(i).getPreferredSize().height / 2 + (menuLabels.get(i).getPreferredSize().height * (i - this.menuLabels.size() / 2)), menuLabels.get(i).getPreferredSize().width, menuLabels.get(i).getPreferredSize().height);
+//            menuLabels.get(i).setForeground(Color.LIGHT_GRAY);
+        }
+        int menuPos = this.mainController.getMenuPos();
+        if (menuPos >= 0 && menuPos < this.menuLabels.size()) {
+            if (this.prevMenuPos != menuPos) {
+                if (prevMenuPos != -1) {
+                    this.menuLabels.get(this.prevMenuPos).setForeground(Color.LIGHT_GRAY);
+                }
+                this.menuLabels.get(menuPos).setForeground(Color.WHITE);
+                this.prevMenuPos = menuPos;
+            }
+
         }
     }
 
