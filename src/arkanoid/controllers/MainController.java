@@ -53,7 +53,7 @@ public class MainController {
 //        Toolkit.getDefaultToolkit().beep();
 
 
-        this.timer.restart();
+//        this.timer.restart();
 //        this.addingBonusTimer.restart();
     }
 
@@ -128,10 +128,8 @@ public class MainController {
     }
 
     private void doCycle() {
-        if (this.gameController.getGameStatusEnum() == GameStatusEnum.GAME_IS_ON) {
             this.doLogics();
-        }
-        this.view.updateView();
+            this.view.updateView();
     }
 
     private void doLogics() {
@@ -159,15 +157,18 @@ public class MainController {
 
 
             if (this.gameController.decreaseLives() == 0) {
-//                this.timer.stop();
                 this.stopTimers();
                 this.gameController.setGameStatusEnum(GameStatusEnum.GAME_IS_OVER);
-                this.timer.start();
+                this.updateImage();
             } else {
                 this.resetPlayerAttributes();
                 this.gameController.addBall(new Ball(GameConstants.getBallRadius(), this.view.getWidth() / 2, this.view.getHeight() / 2, GameConstants.getBallDirX(), GameConstants.getBallDirY()));
             }
         }
+    }
+
+    private void updateImage() {
+        this.view.updateView();
     }
 
     private void resetPlayerAttributes() {
@@ -323,9 +324,8 @@ public class MainController {
             if (this.gameController.getGameStatusEnum() == GameStatusEnum.GAME_IS_ON) {
                 this.stopTimers();
                 this.gameController.setGameStatusEnum(GameStatusEnum.GAME_IS_PAUSE);
-                this.timer.start();
+                this.updateImage();
             } else if (this.gameController.getGameStatusEnum() == GameStatusEnum.GAME_IS_PAUSE) {
-                this.stopTimers();
                 this.gameController.setGameStatusEnum(GameStatusEnum.GAME_IS_ON);
                 this.runTimers();
             }

@@ -16,10 +16,12 @@ public class SwingView extends JPanel implements View, KeyListener {
     private int height;
 
     private JFrame jFrame;
+
+    private Vector<JLabel> menuLabels;
+    private Vector<String> menuTexts;
+
     private JLabel scores;
     private JLabel lives;
-
-    private JLabel gameStatus;
 
     private Vector<Color> colors;
 
@@ -30,37 +32,69 @@ public class SwingView extends JPanel implements View, KeyListener {
         this.height = height;
         this.mainController = mainController;
 
+        this.createMenuTexts();
+        this.createMenuLabels();
+        this.createGameLabels();
+
+        this.setUpJFrame();
+        this.setUpPanel();
+        this.jFrame.add(this);
+
+        this.colors = new Vector<Color>();
+        this.addMainColors();
+
+    }
+
+    private void createMenuLabels() {
+        this.menuLabels = new Vector<JLabel>();
+        for (int i = 0; i < this.menuTexts.size(); ++i) {
+            this.menuLabels.add(new JLabel(this.menuTexts.get(i)));
+            this.menuLabels.lastElement().setFont(new Font("TimesRoman", Font.BOLD, 55));
+            this.menuLabels.lastElement().setForeground(Color.white);
+        }
+    }
+
+    private void createMenuTexts() {
+        this.menuTexts = new Vector<String>();
+        this.menuTexts.add("CONTINUE");
+        this.menuTexts.add("NEW GAME");
+        this.menuTexts.add("EXIT");
+    }
+
+    private void createGameLabels() {
+        this.scores = new JLabel("Scores: " + this.mainController.getScores());
+        this.scores.setFont(new Font("TimesRoman", Font.BOLD, 25));
+        this.scores.setForeground(Color.white);
+
+        this.lives = new JLabel("Lives: " + this.mainController.getLives());
+        this.lives.setFont(new Font("TimesRoman", Font.BOLD, 25));
+        this.lives.setForeground(Color.white);
+    }
+
+
+
+    private void setUpPanel() {
+        this.setBackground(Color.BLACK);
+
+        this.setLayout(null);
+
+        for (JLabel jLabel : this.menuLabels) {
+            this.add(jLabel);
+        }
+
+        this.add(this.scores);
+        this.add(this.lives);
+
+        this.setFocusable(true);
+        this.addKeyListener(this);
+    }
+
+    private void setUpJFrame() {
         this.jFrame = new JFrame("Arkanoid");
         this.jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.jFrame.setSize(this.width, this.height);
         this.jFrame.setResizable(false);
         this.jFrame.setVisible(true);
-
-        this.setBackground(Color.BLACK);
-
-        this.scores = new JLabel();
-        this.scores.setFont(new Font("TimesRoman", Font.BOLD, 25));
-        this.scores.setForeground(Color.WHITE);
-
-        this.lives = new JLabel();
-        this.lives.setFont(new Font("TimesRoman", Font.BOLD, 25));
-        this.lives.setForeground(Color.WHITE);
-
-        this.gameStatus = new JLabel("");
-        this.gameStatus.setFont(new Font("TimesRoman", Font.BOLD, 100));
-        this.gameStatus.setForeground(Color.WHITE);
-
-        this.add(this.scores);
-        this.add(this.lives);
-        this.add(this.gameStatus);
-
-        this.jFrame.add(this);
-
-        this.setFocusable(true);
-        this.addKeyListener(this);
-
-        this.colors = new Vector<Color>();
-        this.addMainColors();
     }
 
     private void addMainColors() {
@@ -80,7 +114,11 @@ public class SwingView extends JPanel implements View, KeyListener {
 
     @Override
     public void updateView() {
+//        paintComponent(this.getGraphics());
         this.repaint();
+//        this.paint(this.getGraphics());
+//        this.update(this.getGraphics());
+//        this.print(this.getGraphics());
     }
 
     @Override
@@ -112,16 +150,25 @@ public class SwingView extends JPanel implements View, KeyListener {
     public void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
         this.drawScene(graphics);
-
+        if (this.mainController.getGameStatusEnum() != GameStatusEnum.GAME_IS_ON) {
+            this.fillBackground(graphics);
+            this.hideGameLabels();
+            this.drawMenu(graphics);
+        }
+//
         Toolkit.getDefaultToolkit().sync();
+        System.out.println("asd");
+    }
+
+    private void hideGameLabels() {
+        this.remove(this.scores);
+        this.remove(this.lives);
     }
 
     private void drawScene(Graphics graphics) {
-        updateScores();
-        updateLives();
-        updateGameStatus();
-
-//        fillBackground(graphics);
+        hideMenuLabels();
+//
+        updateGameLabels();
         drawGameBonuses(graphics);
         drawBall(graphics);
         drawBricks(graphics);
@@ -129,19 +176,33 @@ public class SwingView extends JPanel implements View, KeyListener {
         drawActiveGameBonuses(graphics);
     }
 
-    private void updateGameStatus() {
-        GameStatusEnum gameStatusEnum = this.mainController.getGameStatusEnum();
-        if (gameStatusEnum == GameStatusEnum.GAME_IS_ON) {
-            this.gameStatus.setText("");
-        }  else if (gameStatusEnum == GameStatusEnum.GAME_IS_PAUSE) {
-            this.gameStatus.setText("Pause...");
-            this.gameStatus.setBounds(this.width / 2 - this.gameStatus.getPreferredSize().width / 2, this.height / 2 - this.gameStatus.getPreferredSize().height / 2, 500, 110);
-        } else if (gameStatusEnum == GameStatusEnum.GAME_IS_START) {
-            this.gameStatus.setText("New Game");
-            this.gameStatus.setBounds(this.width / 2 - this.gameStatus.getPreferredSize().width / 2, this.height / 2 - this.gameStatus.getPreferredSize().height / 2, 1000, 110);
-        } else {
-            this.gameStatus.setText("Game Is Over");
-            this.gameStatus.setBounds(this.width / 2 - this.gameStatus.getPreferredSize().width / 2, this.height / 2 - this.gameStatus.getPreferredSize().height / 2, 1000, 110);
+    private void updateGameLabels() {
+        this.scores.setText("Scores: " + this.mainController.getScores());
+        this.scores.setBounds(5, 5, this.scores.getPreferredSize().width, this.scores.getPreferredSize().height);
+//
+        this.lives.setText("Lives: " + this.mainController.getLives());
+        this.lives.setBounds(5, 5 + this.scores.getPreferredSize().height, this.lives.getPreferredSize().width, this.lives.getPreferredSize().height);
+
+        this.add(this.scores);
+        this.add(this.lives);
+    }
+
+    private void hideMenuLabels() {
+        for (JLabel jLabel : this.menuLabels) {
+            this.remove(jLabel);
+        }
+    }
+
+    private void showMenuLabels() {
+        for (JLabel jLabel : this.menuLabels) {
+            this.add(jLabel);
+        }
+    }
+
+    private void drawMenu(Graphics graphics) {
+        this.showMenuLabels();
+        for (int i = 0; i < this.menuLabels.size(); ++i) {
+            menuLabels.get(i).setBounds(this.width / 2 - menuLabels.get(i).getPreferredSize().width / 2 , this.height / 2 - menuLabels.get(i).getPreferredSize().height / 2 + (menuLabels.get(i).getPreferredSize().height * (i - menuTexts.size() / 2)), menuLabels.get(i).getPreferredSize().width, menuLabels.get(i).getPreferredSize().height);
         }
     }
 
@@ -163,18 +224,9 @@ public class SwingView extends JPanel implements View, KeyListener {
         }
     }
 
-    private void updateScores() {
-        this.scores.setText("Scores: " + this.mainController.getScores());
-        this.scores.setBounds(5, 5, 250, 30);
-    }
-    private void updateLives() {
-        this.lives.setText("Lives: " + this.mainController.getLives());
-        this.lives.setBounds(5, 45, 250, 30);
-    }
-
 
     private void fillBackground(Graphics graphics) {
-        graphics.setColor(Color.black);
+        graphics.setColor(new Color(0, 0, 0, 200));
         graphics.fillRect(0, 0, this.width, this.height);
     }
 
