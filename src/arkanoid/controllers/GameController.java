@@ -61,4 +61,20 @@ public class GameController {
         return this.game.getGameBonuses();
     }
 
+    public GameStatusEnum getGameStatusEnum() {
+        return this.game.getGameStatusEnum();
+    }
+
+    public void setGameStatusEnum(GameStatusEnum gameStatusEnum) {
+        this.game.setGameStatusEnum(gameStatusEnum);
+    }
+
+    public void resetGame() {
+        this.game.getBricks().clear();
+        this.game.getBalls().clear();
+        this.game.getGameBonuses().clear();
+
+        this.game.setScores(GameConstants.getScores());
+        this.game.setLives(GameConstants.getLives());
+    }
 }

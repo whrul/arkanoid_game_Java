@@ -11,6 +11,8 @@ public class Game {
     private int scores;
     private int lives;
 
+    private GameStatusEnum gameStatusEnum;
+
     public Game(Player player) {
         this.player = player;
         this.bricks = new Vector<Brick>();
@@ -18,6 +20,7 @@ public class Game {
         this.gameBonuses = new Vector<GameBonus>();
         this.scores = GameConstants.getScores();
         this.lives = GameConstants.getLives();
+        this.gameStatusEnum = GameStatusEnum.GAME_IS_START;
     }
 
     public Player getPlayer() {
@@ -52,5 +55,13 @@ public class Game {
 
     public Vector<GameBonus> getGameBonuses() {
         return this.gameBonuses;
+    }
+
+    public GameStatusEnum getGameStatusEnum() {
+        return gameStatusEnum;
+    }
+
+    public void setGameStatusEnum(GameStatusEnum gameStatusEnum) {
+        this.gameStatusEnum = gameStatusEnum;
     }
 }

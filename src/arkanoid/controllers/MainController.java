@@ -32,6 +32,9 @@ public class MainController {
         this.gameController = new GameController(new Game(this.playerController.getPlayer()));
         this.gameBonusController = new GameBonusController();
         this.gameBonuses = new Vector<GameBonusTimer>();
+
+        this.timer = new Timer(GameConstants.getMainTimerDelay(), new GameCycle());
+        this.addingBonusTimer = new Timer(GameConstants.getBonusAppearTimerDelay(), new BonusCycle());
     }
 
     public void setView(View view) {
@@ -43,18 +46,15 @@ public class MainController {
 
         this.resetPlayerAttributes();
 
-        this.gameController.addBall(new Ball(GameConstants.getBallRadius(), this.view.getWidth() / 2, this.view.getHeight() / 2, GameConstants.getBallDirX(), GameConstants.getBallDirY()));
-
+        this.addStartBall();
         this.addBricks();
 
 //        JOptionPane.showMessageDialog(null, "Let's start it");
 //        Toolkit.getDefaultToolkit().beep();
 
-        this.timer = new Timer(GameConstants.getMainTimerDelay(), new GameCycle());
-        this.timer.restart();
 
-        this.addingBonusTimer = new Timer(GameConstants.getBonusAppearTimerDelay(), new BonusCycle());
-        this.addingBonusTimer.restart();
+        this.timer.restart();
+//        this.addingBonusTimer.restart();
     }
 
     private void addBricks() {
@@ -128,7 +128,9 @@ public class MainController {
     }
 
     private void doCycle() {
-        this.doLogics();
+        if (this.gameController.getGameStatusEnum() == GameStatusEnum.GAME_IS_ON) {
+            this.doLogics();
+        }
         this.view.updateView();
     }
 
@@ -157,7 +159,10 @@ public class MainController {
 
 
             if (this.gameController.decreaseLives() == 0) {
-                this.timer.stop();
+//                this.timer.stop();
+                this.stopTimers();
+                this.gameController.setGameStatusEnum(GameStatusEnum.GAME_IS_OVER);
+                this.timer.start();
             } else {
                 this.resetPlayerAttributes();
                 this.gameController.addBall(new Ball(GameConstants.getBallRadius(), this.view.getWidth() / 2, this.view.getHeight() / 2, GameConstants.getBallDirX(), GameConstants.getBallDirY()));
@@ -247,44 +252,52 @@ public class MainController {
     }
 
     private boolean circleHitsRectOnDown(CircleShape circleShape, RectShape rectShape) {
-        if(circleShape.getPosX() + circleShape.getDiameter() > rectShape.getPosX()
+        if (circleShape.getPosX() + circleShape.getDiameter() > rectShape.getPosX()
                 && circleShape.getPosX() + circleShape.getDiameter() < rectShape.getPosX() + rectShape.getWidth()
                 && circleShape.getPosY() < rectShape.getPosY() + rectShape.getHeight()
                 && circleShape.getPosY() > rectShape.getPosY()) {
-            circleShape.setPosY(rectShape.getPosY() + rectShape.getHeight());
+            if (!(rectShape instanceof GameBonus)) {
+                circleShape.setPosY(rectShape.getPosY() + rectShape.getHeight());
+            }
             return true;
         }
         return false;
     }
 
     private boolean circleHitsRectOnUp(CircleShape circleShape, RectShape rectShape) {
-        if(circleShape.getPosX() + circleShape.getDiameter() > rectShape.getPosX()
+        if (circleShape.getPosX() + circleShape.getDiameter() > rectShape.getPosX()
                 && circleShape.getPosX() + circleShape.getDiameter() < rectShape.getPosX() + rectShape.getWidth()
                 && circleShape.getPosY() + circleShape.getDiameter() > rectShape.getPosY()
                 && circleShape.getPosY() + circleShape.getDiameter() < rectShape.getPosY() + rectShape.getHeight()) {
-            circleShape.setPosY(rectShape.getPosY() - circleShape.getDiameter());
+            if (!(rectShape instanceof GameBonus)) {
+                circleShape.setPosY(rectShape.getPosY() - circleShape.getDiameter());
+            }
             return true;
         }
         return false;
     }
 
     private boolean circleHitsRectOnRight(CircleShape circleShape, RectShape rectShape) {
-        if(circleShape.getPosX() > rectShape.getPosX()
+        if (circleShape.getPosX() > rectShape.getPosX()
                 && circleShape.getPosX() < rectShape.getPosX() + rectShape.getWidth()
                 && circleShape.getPosY() > rectShape.getPosY()
                 && circleShape.getPosY() + circleShape.getDiameter() < rectShape.getPosY() + rectShape.getHeight()) {
-            circleShape.setPosX(rectShape.getPosX() + rectShape.getWidth());
+            if (!(rectShape instanceof GameBonus)) {
+                circleShape.setPosX(rectShape.getPosX() + rectShape.getWidth());
+            }
             return true;
         }
         return false;
     }
 
     private boolean circleHitsRectOnLeft(CircleShape circleShape, RectShape rectShape) {
-        if(circleShape.getPosX() + circleShape.getDiameter() > rectShape.getPosX()
+        if (circleShape.getPosX() + circleShape.getDiameter() > rectShape.getPosX()
             && circleShape.getPosX() + circleShape.getDiameter() < rectShape.getPosX() + rectShape.getWidth()
             && circleShape.getPosY() > rectShape.getPosY()
             && circleShape.getPosY() + circleShape.getDiameter() < rectShape.getPosY() + rectShape.getHeight()) {
-            circleShape.setPosX(rectShape.getPosX() - circleShape.getDiameter());
+            if (!(rectShape instanceof GameBonus)) {
+                circleShape.setPosX(rectShape.getPosX() - circleShape.getDiameter());
+            }
             return true;
         }
         return false;
@@ -302,10 +315,61 @@ public class MainController {
     }
 
     public void keyPressed(KeyEvent keyEvent) {
-        if(Character.toUpperCase(keyEvent.getKeyChar()) == 'A') {
+        if (Character.toUpperCase(keyEvent.getKeyChar()) == 'A') {
             this.aPressed = true;
-        } else if(Character.toUpperCase(keyEvent.getKeyChar()) == 'D') {
+        } else if (Character.toUpperCase(keyEvent.getKeyChar()) == 'D') {
             this.dPressed = true;
+        } else if (keyEvent.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            if (this.gameController.getGameStatusEnum() == GameStatusEnum.GAME_IS_ON) {
+                this.stopTimers();
+                this.gameController.setGameStatusEnum(GameStatusEnum.GAME_IS_PAUSE);
+                this.timer.start();
+            } else if (this.gameController.getGameStatusEnum() == GameStatusEnum.GAME_IS_PAUSE) {
+                this.stopTimers();
+                this.gameController.setGameStatusEnum(GameStatusEnum.GAME_IS_ON);
+                this.runTimers();
+            }
+        } else if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
+            if (this.gameController.getGameStatusEnum() == GameStatusEnum.GAME_IS_OVER || this.gameController.getGameStatusEnum() == GameStatusEnum.GAME_IS_START) {
+                this.restartTheGame();
+            }
+        }
+    }
+
+    private void restartTheGame() {
+        // reset all stuff
+        this.stopTimers();
+
+        this.gameController.resetGame();
+        this.gameBonuses.clear();
+
+        this.resetPlayerAttributes();
+
+        this.addBricks();
+        this.addStartBall();
+
+        this.gameController.setGameStatusEnum(GameStatusEnum.GAME_IS_ON);
+
+        this.runTimers();
+    }
+
+    private void addStartBall() {
+        this.gameController.addBall(new Ball(GameConstants.getBallRadius(), this.view.getWidth() / 2, this.view.getHeight() / 2, GameConstants.getBallDirX(), GameConstants.getBallDirY()));
+    }
+
+    private void runTimers() {
+        this.timer.start();
+        this.addingBonusTimer.start();
+        for (GameBonusTimer gameBonusTimer : this.gameBonuses) {
+            gameBonusTimer.timeForDestroying.start();
+        }
+    }
+
+    private void stopTimers() {
+        this.timer.stop();
+        this.addingBonusTimer.stop();
+        for (GameBonusTimer gameBonusTimer : this.gameBonuses) {
+            gameBonusTimer.timeForDestroying.stop();
         }
     }
 
@@ -348,4 +412,7 @@ public class MainController {
         }
     }
 
+    public GameStatusEnum getGameStatusEnum() {
+        return this.gameController.getGameStatusEnum();
+    }
 }

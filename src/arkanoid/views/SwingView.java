@@ -1,10 +1,7 @@
 package arkanoid.views;
 
 import arkanoid.controllers.MainController;
-import arkanoid.models.Ball;
-import arkanoid.models.Brick;
-import arkanoid.models.GameBonus;
-import arkanoid.models.Player;
+import arkanoid.models.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,6 +18,8 @@ public class SwingView extends JPanel implements View, KeyListener {
     private JFrame jFrame;
     private JLabel scores;
     private JLabel lives;
+
+    private JLabel gameStatus;
 
     private Vector<Color> colors;
 
@@ -43,12 +42,17 @@ public class SwingView extends JPanel implements View, KeyListener {
         this.scores.setFont(new Font("TimesRoman", Font.BOLD, 25));
         this.scores.setForeground(Color.WHITE);
 
-        this.lives= new JLabel();
+        this.lives = new JLabel();
         this.lives.setFont(new Font("TimesRoman", Font.BOLD, 25));
         this.lives.setForeground(Color.WHITE);
 
+        this.gameStatus = new JLabel("");
+        this.gameStatus.setFont(new Font("TimesRoman", Font.BOLD, 100));
+        this.gameStatus.setForeground(Color.WHITE);
+
         this.add(this.scores);
         this.add(this.lives);
+        this.add(this.gameStatus);
 
         this.jFrame.add(this);
 
@@ -113,15 +117,32 @@ public class SwingView extends JPanel implements View, KeyListener {
     }
 
     private void drawScene(Graphics graphics) {
+        updateScores();
+        updateLives();
+        updateGameStatus();
+
 //        fillBackground(graphics);
         drawGameBonuses(graphics);
         drawBall(graphics);
         drawBricks(graphics);
         drawPlayer(graphics);
         drawActiveGameBonuses(graphics);
+    }
 
-        updateScores();
-        updateLives();
+    private void updateGameStatus() {
+        GameStatusEnum gameStatusEnum = this.mainController.getGameStatusEnum();
+        if (gameStatusEnum == GameStatusEnum.GAME_IS_ON) {
+            this.gameStatus.setText("");
+        }  else if (gameStatusEnum == GameStatusEnum.GAME_IS_PAUSE) {
+            this.gameStatus.setText("Pause...");
+            this.gameStatus.setBounds(this.width / 2 - this.gameStatus.getPreferredSize().width / 2, this.height / 2 - this.gameStatus.getPreferredSize().height / 2, 500, 110);
+        } else if (gameStatusEnum == GameStatusEnum.GAME_IS_START) {
+            this.gameStatus.setText("New Game");
+            this.gameStatus.setBounds(this.width / 2 - this.gameStatus.getPreferredSize().width / 2, this.height / 2 - this.gameStatus.getPreferredSize().height / 2, 1000, 110);
+        } else {
+            this.gameStatus.setText("Game Is Over");
+            this.gameStatus.setBounds(this.width / 2 - this.gameStatus.getPreferredSize().width / 2, this.height / 2 - this.gameStatus.getPreferredSize().height / 2, 1000, 110);
+        }
     }
 
     private void drawActiveGameBonuses(Graphics graphics) {
