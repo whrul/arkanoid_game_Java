@@ -17,8 +17,8 @@ public class MainController {
     private PlayerController playerController;
     private GameController gameController;
     private GameBonusController gameBonusController;
-    private boolean aPressed = false;
-    private boolean dPressed = false;
+    private boolean leftPressed = false;
+    private boolean rightPressed = false;
 
     private View view;
     private Timer timer;
@@ -142,10 +142,10 @@ public class MainController {
     }
 
     private void doLogics() {
-       if (this.aPressed) {
+       if (this.leftPressed) {
            this.playerController.moveLeft();
        }
-       if (this.dPressed) {
+       if (this.rightPressed) {
            this.playerController.moveRight();
        }
        this.checkPlayerPosition();
@@ -169,6 +169,14 @@ public class MainController {
                 this.stopTimers();
                 this.gameController.setGameStatusEnum(GameStatusEnum.GAME_IS_OVER);
                 this.updateImage();
+                new Timer(3500, new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent actionEvent) {
+                        gameController.setGameStatusEnum(GameStatusEnum.GAME_IS_START);
+                        ((Timer)actionEvent.getSource()).stop();
+                        updateImage();
+                    }
+                }).start();
             } else {
                 this.resetPlayerAttributes();
                 this.gameController.addBall(new Ball(GameConstants.getBallRadius(), this.view.getWidth() / 2, this.view.getHeight() / 2, GameConstants.getBallDirX(), GameConstants.getBallDirY()));
@@ -325,10 +333,10 @@ public class MainController {
     }
 
     public void keyPressed(KeyEvent keyEvent) {
-        if (Character.toUpperCase(keyEvent.getKeyChar()) == 'A') {
-            this.aPressed = true;
-        } else if (Character.toUpperCase(keyEvent.getKeyChar()) == 'D') {
-            this.dPressed = true;
+        if (keyEvent.getKeyCode() == KeyEvent.VK_LEFT) {
+            this.leftPressed = true;
+        } else if (keyEvent.getKeyCode() == KeyEvent.VK_RIGHT) {
+            this.rightPressed = true;
         } else if (keyEvent.getKeyCode() == KeyEvent.VK_ESCAPE) {
             if (this.gameController.getGameStatusEnum() == GameStatusEnum.GAME_IS_ON) {
                 this.stopTimers();
@@ -362,6 +370,14 @@ public class MainController {
                 this.menuPos = Math.max(--this.menuPos, 0);
                 this.updateImage();
             }
+        }
+    }
+
+    public void keyReleased(KeyEvent keyEvent) {
+        if(keyEvent.getKeyCode() == KeyEvent.VK_LEFT) {
+            this.leftPressed = false;
+        } else if(keyEvent.getKeyCode() == KeyEvent.VK_RIGHT) {
+            this.rightPressed = false;
         }
     }
 
@@ -399,14 +415,6 @@ public class MainController {
         this.addingBonusTimer.stop();
         for (GameBonusTimer gameBonusTimer : this.gameBonuses) {
             gameBonusTimer.timeForDestroying.stop();
-        }
-    }
-
-    public void keyReleased(KeyEvent keyEvent) {
-        if(Character.toUpperCase(keyEvent.getKeyChar()) == 'A') {
-            this.aPressed = false;
-        } else if(Character.toUpperCase(keyEvent.getKeyChar()) == 'D') {
-            this.dPressed = false;
         }
     }
 

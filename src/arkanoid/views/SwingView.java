@@ -22,6 +22,8 @@ public class SwingView extends JPanel implements View, KeyListener {
 
     private JLabel scores;
     private JLabel lives;
+    private JLabel gameOver;
+    private JLabel gameOverScores;
 
     private Vector<Color> colors;
 
@@ -37,6 +39,8 @@ public class SwingView extends JPanel implements View, KeyListener {
         this.createMenuLabels();
         this.createGameLabels();
 
+        this.prepareGameOverScreen();
+
         this.setUpJFrame();
         this.setUpPanel();
         this.jFrame.add(this);
@@ -44,6 +48,15 @@ public class SwingView extends JPanel implements View, KeyListener {
         this.colors = new Vector<Color>();
         this.addMainColors();
 
+    }
+
+    private void prepareGameOverScreen() {
+        gameOver = new JLabel("GAME OVER");
+        gameOver.setFont(new Font("TimesRoman", Font.BOLD, 65));
+        gameOver.setForeground(Color.WHITE);
+        gameOverScores = new JLabel("Scores");
+        gameOverScores.setFont(new Font("TimesRoman", Font.BOLD, 65));
+        gameOverScores.setForeground(Color.WHITE);
     }
 
     private void createMenuLabels() {
@@ -150,14 +163,24 @@ public class SwingView extends JPanel implements View, KeyListener {
     public void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
         this.drawScene(graphics);
-        if (this.mainController.getGameStatusEnum() != GameStatusEnum.GAME_IS_ON) {
+        if (this.mainController.getGameStatusEnum() == GameStatusEnum.GAME_IS_PAUSE || this.mainController.getGameStatusEnum() == GameStatusEnum.GAME_IS_START) {
             this.fillBackground(graphics);
             this.hideGameLabels();
             this.drawMenu(graphics);
+        } else if (this.mainController.getGameStatusEnum() == GameStatusEnum.GAME_IS_OVER) {
+            this.drawGameOverScreen(graphics);
         }
 //
         Toolkit.getDefaultToolkit().sync();
-        System.out.println("asd");
+    }
+
+    private void drawGameOverScreen(Graphics graphics) {
+        gameOver.setBounds(this.width / 2 - gameOver.getPreferredSize().width / 2 , this.height / 2 - gameOver.getPreferredSize().height * 3 / 2, gameOver.getPreferredSize().width, gameOver.getPreferredSize().height);
+        this.add(gameOver);
+
+        gameOverScores.setText("Scores: " + this.mainController.getScores());
+        gameOverScores.setBounds(this.width / 2 - gameOverScores.getPreferredSize().width / 2 , this.height / 2 - gameOverScores.getPreferredSize().height / 2, gameOverScores.getPreferredSize().width, gameOverScores.getPreferredSize().height);
+        this.add(gameOverScores);
     }
 
     private void hideGameLabels() {
@@ -167,6 +190,8 @@ public class SwingView extends JPanel implements View, KeyListener {
 
     private void drawScene(Graphics graphics) {
         hideMenuLabels();
+        this.remove(this.gameOver);
+        this.remove(this.gameOverScores);
 //
         updateGameLabels();
         drawGameBonuses(graphics);
