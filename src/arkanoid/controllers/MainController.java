@@ -28,6 +28,8 @@ public class MainController {
     private Vector<String> menuTexts;
     private int menuPos = 1;
 
+    private boolean gamePause = true;
+
     public MainController() {
         this.ballController = new BallController();
         this.brickController = new BrickController();
@@ -156,6 +158,10 @@ public class MainController {
         this.gameController.getBricks().clear();
         this.gameController.getBalls().clear();
         this.gameController.getGameBonuses().clear();
+
+        for (GameBonusTimer gameBonusTimer : this.gameBonusTimers) {
+            gameBonusTimer.timeForDestroying.stop();
+        }
         this.gameBonusTimers.clear();
 
         this.resetPlayerAttributes();
@@ -239,7 +245,7 @@ public class MainController {
                 || circleHitsRectOnUp(ball, this.gameBonusTimers.get(i).gameBonus))) {
                 this.gameBonusController.makeActive(this.gameBonusTimers.get(i).gameBonus, this.gameController.getPlayer(), this.gameController.getBalls(), this.gameController.getBricks(), this.view, true);
                 this.gameController.destroyGameBonus(this.gameBonusTimers.get(i).gameBonus);
-                this.gameBonusTimers.get(i).timeForDestroying.restart();
+                this.gameBonusTimers.get(i).restartTimer();
             }
         }
     }
@@ -419,6 +425,10 @@ public class MainController {
         this.stopTimers();
 
         this.gameController.resetGame();
+
+        for (GameBonusTimer gameBonusTimer : this.gameBonusTimers) {
+            gameBonusTimer.timeForDestroying.stop();
+        }
         this.gameBonusTimers.clear();
 
         this.resetPlayerAttributes();
@@ -438,17 +448,21 @@ public class MainController {
     private void runTimers() {
         this.timer.start();
         this.addingBonusTimer.start();
-        for (GameBonusTimer gameBonusTimer : this.gameBonusTimers) {
-            gameBonusTimer.timeForDestroying.start();
-        }
+
+        this.gamePause = false;
+//        for (GameBonusTimer gameBonusTimer : this.gameBonusTimers) {
+//            gameBonusTimer.timeForDestroying.start();
+//        }
     }
 
     private void stopTimers() {
         this.timer.stop();
         this.addingBonusTimer.stop();
-        for (GameBonusTimer gameBonusTimer : this.gameBonusTimers) {
-            gameBonusTimer.timeForDestroying.stop();
-        }
+
+        gamePause = true;
+//        for (GameBonusTimer gameBonusTimer : this.gameBonusTimers) {
+//            gameBonusTimer.timeForDestroying.stop();
+//        }
     }
 
     public Player getPlayer() {
@@ -470,10 +484,12 @@ public class MainController {
     public class GameBonusTimer {
         private GameBonus gameBonus;
         private Timer timeForDestroying;
+        private int counter;
 
         public GameBonusTimer(GameBonus gameBonus) {
             this.gameBonus = gameBonus;
-            this.timeForDestroying = new Timer(GameConstants.getBonusDestroyTimerDelay(), new EndOfBonusCycle(this));
+            this.counter = 10;
+            this.timeForDestroying = new Timer(GameConstants.getBonusDestroyTimerDelay() / 10, new EndOfBonusCycle(this));
             this.timeForDestroying.restart();
         }
 
@@ -483,6 +499,11 @@ public class MainController {
 
         public GameBonus getGameBonus() {
             return this.gameBonus;
+        }
+
+        public void restartTimer() {
+            this.counter = 10;
+            this.timeForDestroying.restart();
         }
     }
 
@@ -495,6 +516,13 @@ public class MainController {
 
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
+            if (gamePause) {
+                return;
+            }
+            --this.gameBonusTimer.counter;
+            if (this.gameBonusTimer.counter > 0) {
+                return;
+            }
             if (!this.gameBonusTimer.gameBonus.isUsed()) {
                 gameController.destroyGameBonus(this.gameBonusTimer.gameBonus);
             } else {
