@@ -262,6 +262,23 @@ public class MainController {
                 this.gameController.destroyBall(ball);
                 return;
             }
+
+            int ballCenterX = ball.getPosX() + ball.getRadius();
+            int playerCenterX = playerController.getPlayer().getPosX() + playerController.getPlayer().getWidth() / 2;
+
+            if (Math.abs(ballCenterX - playerCenterX) < ball.getDiameter()) {
+                ball.setDirX(0);
+            } else if (ballCenterX < playerCenterX && ball.getDirX() >= 0
+                    || ballCenterX > playerCenterX && ball.getDirX() <= 0) {
+                if (ball.getDirX() == 0) {
+                    ball.setDirX(ball.getDirY());
+                    if (ballCenterX > playerCenterX){
+                        ball.setDirX(-ball.getDirY());
+                    }
+                }
+                ballController.reverseXDir(ball);
+            }
+
             this.ballController.reverseYDir(ball);
             ball.setPosY(this.gameController.getPlayer().getPosY() - ball.getDiameter());
         }
