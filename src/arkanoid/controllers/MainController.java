@@ -201,7 +201,7 @@ public class MainController {
                 }).start();
             } else {
                 this.resetPlayerAttributes();
-                this.gameController.addBall(new Ball(GameConstants.getBallRadius(), this.view.getWidth() / 2, this.view.getHeight() / 2, GameConstants.getBallDirX(), GameConstants.getBallDirY()));
+                this.addStartBall();
             }
         }
     }
@@ -442,7 +442,11 @@ public class MainController {
     }
 
     private void addStartBall() {
-        this.gameController.addBall(new Ball(GameConstants.getBallRadius(), this.view.getWidth() / 2, this.view.getHeight() / 2, GameConstants.getBallDirX(), GameConstants.getBallDirY()));
+        int sign = 1;
+        if (new Random().nextBoolean()) {
+            sign = -1;
+        }
+        this.gameController.addBall(new Ball(GameConstants.getBallRadius(), this.view.getWidth() / 2, this.view.getHeight() / 2, GameConstants.getBallDirX() * sign, GameConstants.getBallDirY()));
     }
 
     private void runTimers() {

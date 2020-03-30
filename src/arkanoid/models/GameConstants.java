@@ -2,7 +2,7 @@ package arkanoid.models;
 
 public class GameConstants {
     private static int mainTimerDelay = 15;
-    private static int bonusAppearTimerDelay = 3000;
+    private static int bonusAppearTimerDelay = 1000;
     private static int bonusDestroyTimerDelay = 15000;
     private static int levelCompleteScreenDuration = 2000;
     private static int gameOverScreenDuration = 3500;
