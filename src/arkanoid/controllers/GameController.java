@@ -17,12 +17,19 @@ public class GameController {
     public void addBall(Ball ball) {
         this.game.getBalls().add(ball);
     }
+    public void addGameBonus(GameBonus gameBonus) {
+        this.game.getGameBonuses().add(gameBonus);
+    }
     public void destroyBrick(Brick brick) {
         this.game.getBricks().remove(brick);
     }
     public void destroyBall(Ball ball) {
         this.game.getBalls().remove(ball);
     }
+    public void destroyGameBonus(GameBonus gameBonus) {
+        this.game.getGameBonuses().remove(gameBonus);
+    }
+
     public int decreaseLives() {
         this.game.setLives(this.game.getLives() - 1);
         return this.game.getLives();
@@ -40,33 +47,27 @@ public class GameController {
     public Vector<Brick> getBricks() {
         return this.game.getBricks();
     }
-
     public int getScores() {
         return this.game.getScores();
     }
-
     public int getLives() {
         return this.game.getLives();
     }
-
-    public void addGameBonus(GameBonus gameBonus) {
-        this.game.getGameBonuses().add(gameBonus);
-    }
-
-    public void destroyGameBonus(GameBonus gameBonus) {
-        this.game.getGameBonuses().remove(gameBonus);
-    }
-
     public Vector<GameBonus> getGameBonuses() {
         return this.game.getGameBonuses();
     }
-
     public GameStatusEnum getGameStatusEnum() {
         return this.game.getGameStatusEnum();
+    }
+    public int getLevel() {
+        return this.game.getLevel();
     }
 
     public void setGameStatusEnum(GameStatusEnum gameStatusEnum) {
         this.game.setGameStatusEnum(gameStatusEnum);
+    }
+    public void setLevel(int level) {
+        this.game.setLevel(level);
     }
 
     public void resetGame() {
@@ -77,14 +78,6 @@ public class GameController {
         this.game.setScores(GameConstants.getScores());
         this.game.setLives(GameConstants.getLives());
         this.game.setLevel(GameConstants.getLevel());
-    }
-
-    public int getLevel() {
-        return this.game.getLevel();
-    }
-
-    public void setLevel(int level) {
-        this.game.setLevel(level);
     }
 
 }
