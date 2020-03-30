@@ -6,7 +6,7 @@ public class GameBonus implements RectShape {
     private int width;
     private int height;
     private BonusEnum bonusEnum;
-    private boolean used;
+    private boolean used = false;
 
     public GameBonus(int posX, int posY, int width, int height, BonusEnum bonusEnum) {
         this.posX = posX;
@@ -14,7 +14,6 @@ public class GameBonus implements RectShape {
         this.width = width;
         this.height = height;
         this.bonusEnum = bonusEnum;
-        this.used = false;
     }
 
     public boolean isUsed() {
@@ -30,17 +29,9 @@ public class GameBonus implements RectShape {
         return posX;
     }
 
-    public void setPosX(int posX) {
-        this.posX = posX;
-    }
-
     @Override
     public int getPosY() {
         return posY;
-    }
-
-    public void setPosY(int posY) {
-        this.posY = posY;
     }
 
     @Override

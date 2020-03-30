@@ -4,25 +4,18 @@ import java.util.Vector;
 
 public class Game {
     private Player player;
-    private Vector<Brick> bricks;
-    private Vector<Ball> balls;
-    private Vector<GameBonus> gameBonuses;
+    private Vector<Brick> bricks = new Vector<Brick>();;
+    private Vector<Ball> balls = new Vector<Ball>();
+    private Vector<GameBonus> gameBonuses = new Vector<GameBonus>();
 
-    private int scores;
-    private int lives;
-    private int level;
+    private int scores = GameConstants.getScores();
+    private int lives = GameConstants.getLives();
+    private int level = GameConstants.getLevel();
 
-    private GameStatusEnum gameStatusEnum;
+    private GameStatusEnum gameStatusEnum = GameStatusEnum.GAME_IS_START;
 
     public Game(Player player) {
         this.player = player;
-        this.bricks = new Vector<Brick>();
-        this.balls = new Vector<Ball>();
-        this.gameBonuses = new Vector<GameBonus>();
-        this.scores = GameConstants.getScores();
-        this.lives = GameConstants.getLives();
-        this.level = GameConstants.getLevel();
-        this.gameStatusEnum = GameStatusEnum.GAME_IS_START;
     }
 
     public Player getPlayer() {

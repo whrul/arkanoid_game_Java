@@ -7,7 +7,9 @@ public class Player {
     private int height;
     private int dirX;
 
-    public Player(){};
+    public Player(){
+        this(0, 0, 0, 0, 0);
+    };
 
     public Player(int posX, int posY, int width, int height, int dirX) {
         this.posX = posX;
