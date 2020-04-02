@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
+import java.util.Arrays;
 import java.util.Vector;
 
 public class SwingView extends JPanel implements View {
@@ -29,7 +30,7 @@ public class SwingView extends JPanel implements View {
 
     private Vector<Color> colors;
 
-    private int prevMenuPos = -1;
+    private int prevMenuPosition = -1;
 
     public SwingView(int width, int height, MainController mainController) {
         super();
@@ -87,10 +88,9 @@ public class SwingView extends JPanel implements View {
     }
 
     private void createMenuLabels() {
-        Vector<String> menuTexts = this.mainController.getMenuTexts();
         this.menuLabels = new Vector<JLabel>();
-        for (int i = 0; i < menuTexts.size(); ++i) {
-            this.menuLabels.add(new JLabel(menuTexts.get(i)));
+        for (MenuPositionEnum menuPositionEnum : Arrays.asList(MenuPositionEnum.values())) {
+            this.menuLabels.add(new JLabel(menuPositionEnum.name()));
             this.menuLabels.lastElement().setFont(new Font("TimesRoman", Font.BOLD, SwingViewConstants.getMenuLabelsFontSize()));
             this.menuLabels.lastElement().setForeground(Color.LIGHT_GRAY);
         }
@@ -182,7 +182,7 @@ public class SwingView extends JPanel implements View {
         if (this.mainController.getGameStatusEnum() == GameStatusEnum.GAME_IS_PAUSE || this.mainController.getGameStatusEnum() == GameStatusEnum.GAME_IS_START) {
             this.fillBackground(graphics);
             this.hideGameLabels();
-            this.drawMenu(graphics);
+            this.drawMenu();
         } else if (this.mainController.getGameStatusEnum() == GameStatusEnum.GAME_IS_OVER) {
             this.drawGameOverScreen(graphics);
         } else if (this.mainController.getGameStatusEnum() == GameStatusEnum.LEVEL_COMPLETE) {
@@ -254,23 +254,20 @@ public class SwingView extends JPanel implements View {
         }
     }
 
-    private void drawMenu(Graphics graphics) {
+    private void drawMenu() {
         this.showMenuLabels();
         for (int i = 0; i < this.menuLabels.size(); ++i) {
             menuLabels.get(i).setBounds(this.width / 2 - menuLabels.get(i).getPreferredSize().width / 2 , this.height / 2 - menuLabels.get(i).getPreferredSize().height / 2 + (menuLabels.get(i).getPreferredSize().height * (i - this.menuLabels.size() / 2)), menuLabels.get(i).getPreferredSize().width, menuLabels.get(i).getPreferredSize().height);
 //            menuLabels.get(i).setForeground(Color.LIGHT_GRAY);
         }
-        int menuPos = this.mainController.getMenuPos();
-        if (menuPos >= 0 && menuPos < this.menuLabels.size()) {
-            if (this.prevMenuPos != menuPos) {
-                if (prevMenuPos != -1) {
-                    this.menuLabels.get(this.prevMenuPos).setForeground(Color.LIGHT_GRAY);
-                }
-                this.menuLabels.get(menuPos).setForeground(Color.WHITE);
-                this.prevMenuPos = menuPos;
-            }
 
+        int index = this.mainController.getMenuPositionEnum().getIntRepr();
+        if (index != this.prevMenuPosition) {
+            this.menuLabels.get(Math.min(Math.max(this.prevMenuPosition, 0), this.menuLabels.size() - 1)).setForeground(Color.LIGHT_GRAY);
+            this.prevMenuPosition = index;
+            this.menuLabels.get(Math.min(index, this.menuLabels.size() - 1)).setForeground(Color.WHITE);
         }
+
     }
 
     private void drawActiveGameBonuses(Graphics graphics) {
