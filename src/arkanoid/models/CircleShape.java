@@ -7,4 +7,6 @@ public interface CircleShape {
     int getDiameter();
     void setPosX(int posX);
     void setPosY(int posY);
+    int getCenterX();
+    int getCenterY();
 }

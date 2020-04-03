@@ -35,6 +35,16 @@ public class Ball implements CircleShape {
         this.posY = posY;
     }
 
+    @Override
+    public int getCenterX() {
+        return this.posX + this.radius;
+    }
+
+    @Override
+    public int getCenterY() {
+        return this.posY + this.radius;
+    }
+
     public int getDirX() {
         return dirX;
     }
