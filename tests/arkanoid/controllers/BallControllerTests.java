@@ -41,4 +41,22 @@ public class BallControllerTests {
         assertEquals(120, ball.getPosY());
     }
 
+    @Test
+    void setNewCenterXWorksCorrectly() {
+        int curCenterX = ball.getCenterX();
+
+        ballController.setNewCenterX(ball, curCenterX + 15);
+
+        assertEquals(curCenterX + 15, ball.getCenterX());
+    }
+
+    @Test
+    void setNewCenterYWorksCorrectly() {
+        int curCenterY = ball.getCenterY();
+
+        ballController.setNewCenterY(ball, curCenterY + 15);
+
+        assertEquals(curCenterY + 15, ball.getCenterY());
+    }
+
 }

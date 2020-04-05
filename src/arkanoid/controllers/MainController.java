@@ -257,7 +257,7 @@ public class MainController {
             this.ballController.reverseYDir(ball);
             ball.setPosY(0);
         } else if (ball.getPosY() + ball.getDiameter() > this.gameController.getPlayer().getPosY()) {
-            if (ball.getPosX() + ball.getDiameter() < this.gameController.getPlayer().getPosX() || ball.getPosX() > this.gameController.getPlayer().getPosX() + this.gameController.getPlayer().getWidth()) {
+            if (ball.getCenterX() < this.gameController.getPlayer().getPosX() || ball.getCenterX() > this.gameController.getPlayer().getPosX() + this.gameController.getPlayer().getWidth()) {
                 this.gameController.destroyBall(ball);
                 return;
             }
