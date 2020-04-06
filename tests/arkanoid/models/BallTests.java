@@ -62,6 +62,16 @@ public class BallTests {
     }
 
     @Test
+    void setDirYCoefWorksCorrectly() {
+        int newDirYCoef = ball.getDirYCoef() + 1;
+
+        ball.setDirYCoef(newDirYCoef);
+
+        assertEquals(newDirYCoef, ball.getDirYCoef());
+    }
+
+
+    @Test
     void diameterIsEqualToDoubleRadius() {
         assertEquals(ball.getDiameter(), ball.getRadius() * 2);
     }

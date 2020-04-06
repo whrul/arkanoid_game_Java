@@ -6,6 +6,8 @@ public class Ball implements CircleShape {
     private int posY;
     private int dirX;
     private int dirY;
+    private int dirYCoef = 1;
+
 
     public Ball(int radius, int posX, int posY, int dirX, int dirY) {
         this.radius = radius;
@@ -69,5 +71,13 @@ public class Ball implements CircleShape {
     @Override
     public int getDiameter() {
         return this.radius * 2;
+    }
+
+    public int getDirYCoef() {
+        return dirYCoef;
+    }
+
+    public void setDirYCoef(int dirYCoef) {
+        this.dirYCoef = dirYCoef;
     }
 }

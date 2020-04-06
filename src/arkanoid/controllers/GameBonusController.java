@@ -83,9 +83,11 @@ public class GameBonusController {
             if (status) {
                 ball.setDirX(ball.getDirX() * 2);
                 ball.setDirY(ball.getDirY() * 2);
+                ball.setDirYCoef(ball.getDirYCoef() + 1);
             } else {
                 ball.setDirX(ball.getDirX() / 2);
                 ball.setDirY(ball.getDirY() / 2);
+                ball.setDirYCoef(ball.getDirYCoef() - 1);
             }
         }
     }
@@ -95,6 +97,7 @@ public class GameBonusController {
             int ammount = balls.size();
             for (int i = 0; i < ammount; ++i) {
                 balls.add(new Ball(balls.get(i).getRadius(), balls.get(i).getPosX(), balls.get(i).getPosY(), -balls.get(i).getDirX(), balls.get(i).getDirY()));
+                balls.lastElement().setDirYCoef(balls.get(i).getDirYCoef());
             }
         }
     }

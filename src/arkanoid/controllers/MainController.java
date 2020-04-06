@@ -264,21 +264,11 @@ public class MainController {
                 return;
             }
 
-            int ballCenterX = ball.getPosX() + ball.getRadius();
+            int ballCenterX = ball.getCenterX();
             int playerCenterX = playerController.getPlayer().getPosX() + playerController.getPlayer().getWidth() / 2;
-
-            if (Math.abs(ballCenterX - playerCenterX) < Math.min(2, 2)) {
-                ball.setDirX(0);
-            } else if (ballCenterX < playerCenterX && ball.getDirX() >= 0
-                    || ballCenterX > playerCenterX && ball.getDirX() <= 0) {
-                if (ball.getDirX() == 0) {
-                    ball.setDirX(ball.getDirY());
-                    if (ballCenterX > playerCenterX){
-                        ball.setDirX(-ball.getDirY());
-                    }
-                }
-                ballController.reverseXDir(ball);
-            }
+            int diff = Math.abs(ballCenterX - playerCenterX);
+            double help = diff * 2D / playerController.getPlayer().getWidth() * Math.abs(GameConstants.getBallDirY());
+            ball.setDirY(Math.max(2, Math.abs(GameConstants.getBallDirY()) - (int)help) * ball.getDirYCoef());
 
             this.ballController.reverseYDir(ball);
             ball.setPosY(this.gameController.getPlayer().getPosY() - ball.getDiameter());
