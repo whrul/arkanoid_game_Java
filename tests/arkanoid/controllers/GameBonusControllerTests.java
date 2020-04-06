@@ -7,8 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GameBonusControllerTests {
 
-    private GameBonusController gameBonusController = new GameBonusController();
-    private Game game = new Game(new Player(1, 1, 1, 1, 1));
     private View testView = new View() {
         @Override
         public void setController(MainController mainController) {}
@@ -21,6 +19,8 @@ public class GameBonusControllerTests {
         @Override
         public void closeView() {}
     };
+    private GameBonusController gameBonusController = new GameBonusController(testView);
+    private Game game = new Game(new Player(1, 1, 1, 1, 1));
 
     @Test
     void movePlayerUpBonusShouldChangePlayerYPos() {

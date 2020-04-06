@@ -1,18 +1,25 @@
 package arkanoid.controllers;
 
-import arkanoid.models.Ball;
-import arkanoid.models.Brick;
-import arkanoid.models.GameBonus;
-import arkanoid.models.Player;
+import arkanoid.models.*;
 import arkanoid.views.View;
 
 import java.util.Vector;
 
 public class GameBonusController {
-    public GameBonusController() {
 
+    private int[] maxBonusesTheSameTime;
+
+    public GameBonusController(View view) {
+        this.maxBonusesTheSameTime = new int[BonusEnum.values().length];
+        this.setUp(view);
     }
     public void makeActive(GameBonus gameBonus, Player player, Vector<Ball> balls, Vector<Brick> bricks, View view, boolean status) {
+
+        if (status && this.maxBonusesTheSameTime[gameBonus.getBonusEnum().getIntRepr()] == 0
+           || !status && !gameBonus.isUsed()) {
+            return;
+        }
+
         switch(gameBonus.getBonusEnum()) {
             case SHORT_PLAYER:
                 this.makePlayerShorter(player, status);
@@ -37,6 +44,11 @@ public class GameBonusController {
                 break;
             default:
                 break;
+        }
+        if (status) {
+            --this.maxBonusesTheSameTime[gameBonus.getBonusEnum().getIntRepr()];
+        } else {
+            ++this.maxBonusesTheSameTime[gameBonus.getBonusEnum().getIntRepr()];
         }
         gameBonus.setUsed(true);
     }
@@ -108,4 +120,90 @@ public class GameBonusController {
     }
 
 
+    public void reset(View view) {
+        this.setUp(view);
+    }
+
+    private void setUp(View view) {
+        this.maxBonusesTheSameTime[BonusEnum.SHORT_PLAYER.getIntRepr()] = Math.max(0, this.shortPlayerBonusMaxTheSameTime());
+        this.maxBonusesTheSameTime[BonusEnum.LONG_PLAYER.getIntRepr()] = Math.max(0, this.longPlayerBonusMaxTheSameTime(view));
+        this.maxBonusesTheSameTime[BonusEnum.MULTI_BALLS.getIntRepr()] = Math.max(0, this.multiplyBallsBonusMaxTheSameTime());
+        this.maxBonusesTheSameTime[BonusEnum.HIGH_SPEED_BALLS.getIntRepr()] = Math.max(0, this.highSpeedBallsBonusMaxTheSameTime());
+        this.maxBonusesTheSameTime[BonusEnum.LOW_SPEED_PLAYER.getIntRepr()] = Math.max(0, this.lowSpeedPlayerBonusMaxTheSameTime());
+        this.maxBonusesTheSameTime[BonusEnum.HIGH_SPEED_PLAYER.getIntRepr()] = Math.max(0, this.highSpeedPlayerBonusMaxTheSameTime());
+        this.maxBonusesTheSameTime[BonusEnum.MOVE_PLAYER_UP.getIntRepr()] = Math.max(0, this.movePlayerUpBonusMaxTheSameTime(view));
+    }
+
+    private int shortPlayerBonusMaxTheSameTime() {
+        int counter = 0;
+        int playerWidth = GameConstants.getPlayerWidth();
+        while (playerWidth > 20) {
+            playerWidth /= 2;
+            ++counter;
+        }
+        --counter;
+        return counter;
+    }
+
+    private int longPlayerBonusMaxTheSameTime(View view) {
+        int counter = 0;
+        int playerWidth = GameConstants.getPlayerWidth();
+        while (playerWidth < view.getWidth()) {
+            playerWidth *= 2;
+            ++counter;
+        }
+        --counter;
+        return counter;
+    }
+
+    private int multiplyBallsBonusMaxTheSameTime() {
+        return 3;
+    }
+
+    private int highSpeedBallsBonusMaxTheSameTime() {
+        int counter = 0;
+        int ballSpeedX = Math.abs(GameConstants.getBallDirX());
+        int ballSpeedY = Math.abs(GameConstants.getBallDirX());
+
+        while (ballSpeedX < GameConstants.getBallRadius() * 2 && ballSpeedY < GameConstants.getBallRadius() * 2) {
+            ballSpeedX *= 2;
+            ballSpeedY *= 2;
+            ++counter;
+        }
+        --counter;
+        return counter;
+    }
+
+    private int lowSpeedPlayerBonusMaxTheSameTime() {
+        int counter = 0;
+        int playerSpeed = Math.abs(GameConstants.getPlayerDirX());
+        while (playerSpeed > 0) {
+            playerSpeed /= 2;
+            ++counter;
+        }
+        --counter;
+        return counter;
+    }
+
+    private int highSpeedPlayerBonusMaxTheSameTime() {
+        int counter = 0;
+        int playerSpeed = Math.abs(GameConstants.getPlayerDirX());
+        while (playerSpeed < GameConstants.getPlayerWidth() / 2) {
+            playerSpeed *= 2;
+            ++counter;
+        }
+        --counter;
+        return counter;
+    }
+
+    private int movePlayerUpBonusMaxTheSameTime(View view) {
+        int counter = 0;
+        int playerPosY = view.getHeight() - GameConstants.getPlayerHeight() * 3;
+        while (playerPosY > view.getHeight() / 2) {
+            playerPosY -= GameConstants.getPlayerHeight() * 2;
+            ++counter;
+        }
+        --counter;
+        return counter;
+    }
 }

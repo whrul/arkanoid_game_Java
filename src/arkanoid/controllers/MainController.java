@@ -34,7 +34,6 @@ public class MainController {
         this.brickController = new BrickController();
         this.playerController = new PlayerController(new Player());
         this.gameController = new GameController(new Game(this.playerController.getPlayer()));
-        this.gameBonusController = new GameBonusController();
         this.gameBonusTimers = new Vector<GameBonusTimer>();
 
         this.timer = new Timer(GameConstants.getMainTimerDelay(), new ActionListener() {
@@ -53,10 +52,11 @@ public class MainController {
 
     public void setView(View view) {
         this.view = view;
-        this.finishSetUp();
+        this.finishSetUp(view);
     }
 
-    private void finishSetUp() {
+    private void finishSetUp(View view) {
+        this.gameBonusController = new GameBonusController(view);
 
         this.resetPlayerAttributes();
 
@@ -158,6 +158,8 @@ public class MainController {
 
         this.resetPlayerAttributes();
 
+        this.gameBonusController.reset(this.view);
+
 
         this.gameController.setLevel(this.gameController.getLevel() + 1);
         this.addBricks();
@@ -170,8 +172,7 @@ public class MainController {
 
     private void checkForGameOver() {
 
-        if (this.gameController.getBalls().isEmpty() || this.gameController.getPlayer().getWidth() == 0 ||  this.gameController.getPlayer().getDirX() == 0) {
-            this.gameController.getBalls().clear();
+        if (this.gameController.getBalls().isEmpty()) {
             for (GameBonusTimer gameBonusTimer : this.gameBonusTimers) {
                 gameBonusTimer.timeForDestroying.stop();
             }
@@ -193,6 +194,7 @@ public class MainController {
                 }).start();
             } else {
                 this.resetPlayerAttributes();
+                this.gameBonusController.reset(this.view);
                 this.addStartBall();
             }
         }
@@ -346,13 +348,6 @@ public class MainController {
             && circleShape.getCenterY() < rectShape.getPosY()
             && this.distBetween(circleShape.getCenterX(), circleShape.getCenterY(), rectShape.getPosX(), rectShape.getPosY()) < circleShape.getRadius()) {
             if (!(rectShape instanceof GameBonus)) {
-//                circleShape.setPosX(rectShape.getPosX() - circleShape.getDiameter()); // wrong
-
-//                do {
-//                    circleShape.setPosX(circleShape.getPosX() - 1);
-//                    circleShape.setPosY(circleShape.getPosY() - 1);
-//                } while (this.distBetween(circleShape.getCenterX(), circleShape.getCenterY(), rectShape.getPosX(), rectShape.getPosY()) < circleShape.getRadius());
-
                 ballController.setNewCenterX((Ball)circleShape, rectShape.getPosX() - circleShape.getRadius() * (rectShape.getPosX() - circleShape.getCenterX()) / distBetween(circleShape.getCenterX(), circleShape.getCenterY(), rectShape.getPosX(), rectShape.getPosY()) - 1);
                 ballController.setNewCenterY((Ball)circleShape, rectShape.getPosY() - circleShape.getRadius() * (rectShape.getPosY() - circleShape.getCenterY()) / distBetween(circleShape.getCenterX(), circleShape.getCenterY(), rectShape.getPosX(), rectShape.getPosY()) - 1);
 
@@ -366,11 +361,6 @@ public class MainController {
                 && circleShape.getCenterY() > rectShape.getPosY() + rectShape.getHeight()
                 && this.distBetween(circleShape.getCenterX(), circleShape.getCenterY(), rectShape.getPosX(), rectShape.getPosY() + rectShape.getHeight()) < circleShape.getRadius()) {
             if (!(rectShape instanceof GameBonus)) {
-//                circleShape.setPosX(rectShape.getPosX() - circleShape.getDiameter()); /// wrong
-//                do {
-//                    circleShape.setPosX(circleShape.getPosX() - 1);
-//                    circleShape.setPosY(circleShape.getPosY() + 1);
-//                } while (this.distBetween(circleShape.getCenterX(), circleShape.getCenterY(), rectShape.getPosX(), rectShape.getPosY() + rectShape.getHeight()) < circleShape.getRadius());
                 ballController.setNewCenterX((Ball)circleShape, rectShape.getPosX() - circleShape.getRadius() * (rectShape.getPosX() - circleShape.getCenterX()) / distBetween(circleShape.getCenterX(), circleShape.getCenterY(), rectShape.getPosX(), rectShape.getPosY() + rectShape.getHeight()) - 1);
                 ballController.setNewCenterY((Ball)circleShape, rectShape.getPosY() + rectShape.getHeight() - circleShape.getRadius() * (rectShape.getPosY() + rectShape.getHeight() - circleShape.getCenterY()) / distBetween(circleShape.getCenterX(), circleShape.getCenterY(), rectShape.getPosX(), rectShape.getPosY() + rectShape.getHeight()) + 1);
 
@@ -384,11 +374,6 @@ public class MainController {
                 && circleShape.getCenterY() < rectShape.getPosY()
                 && this.distBetween(circleShape.getCenterX(), circleShape.getCenterY(), rectShape.getPosX() + rectShape.getWidth(), rectShape.getPosY()) < circleShape.getRadius()) {
             if (!(rectShape instanceof GameBonus)) {
-//                circleShape.setPosX(rectShape.getPosX() + rectShape.getWidth()); // wrong
-//                do {
-//                    circleShape.setPosX(circleShape.getPosX() + 1);
-//                    circleShape.setPosY(circleShape.getPosY() - 1);
-//                } while (this.distBetween(circleShape.getCenterX(), circleShape.getCenterY(), rectShape.getPosX() + rectShape.getWidth(), rectShape.getPosY()) < circleShape.getRadius());
                 ballController.setNewCenterX((Ball)circleShape, rectShape.getPosX() + rectShape.getWidth() - circleShape.getRadius() * (rectShape.getPosX() + rectShape.getWidth() - circleShape.getCenterX()) / distBetween(circleShape.getCenterX(), circleShape.getCenterY(), rectShape.getPosX() + rectShape.getWidth(), rectShape.getPosY()) + 1);
                 ballController.setNewCenterY((Ball)circleShape, rectShape.getPosY() - circleShape.getRadius() * (rectShape.getPosY() - circleShape.getCenterY()) / distBetween(circleShape.getCenterX(), circleShape.getCenterY(), rectShape.getPosX() + rectShape.getWidth(), rectShape.getPosY()) - 1);
             }
@@ -401,12 +386,6 @@ public class MainController {
                 && circleShape.getCenterY() > rectShape.getPosY() + rectShape.getHeight()
                 && this.distBetween(circleShape.getCenterX(), circleShape.getCenterY(), rectShape.getPosX() + rectShape.getWidth(), rectShape.getPosY() + rectShape.getHeight()) < circleShape.getRadius()) {
             if (!(rectShape instanceof GameBonus)) {
-//                circleShape.setPosX(rectShape.getPosX() + rectShape.getWidth()); // wrong
-//            do {
-//                circleShape.setPosX(circleShape.getPosX() + 1);
-//                circleShape.setPosY(circleShape.getPosY() + 1);
-//            } while (this.distBetween(circleShape.getCenterX(), circleShape.getCenterY(), rectShape.getPosX() + rectShape.getWidth(), rectShape.getPosY() + rectShape.getHeight()) < circleShape.getRadius());
-
                 ballController.setNewCenterX((Ball)circleShape, rectShape.getPosX() + rectShape.getWidth() - circleShape.getRadius() * (rectShape.getPosX() + rectShape.getWidth() - circleShape.getCenterX()) / distBetween(circleShape.getCenterX(), circleShape.getCenterY(), rectShape.getPosX() + rectShape.getWidth(), rectShape.getPosY() + rectShape.getHeight()) + 1);
                 ballController.setNewCenterY((Ball)circleShape, rectShape.getPosY() + rectShape.getHeight() - circleShape.getRadius() * (rectShape.getPosY() + rectShape.getHeight() - circleShape.getCenterY()) / distBetween(circleShape.getCenterX(), circleShape.getCenterY(), rectShape.getPosX() + rectShape.getWidth(), rectShape.getPosY() + rectShape.getHeight()) + 1);
 
@@ -536,6 +515,8 @@ public class MainController {
         }
         this.gameBonusTimers.clear();
 
+        this.gameBonusController.reset(this.view);
+
         this.resetPlayerAttributes();
 
         this.addBricks();
@@ -638,7 +619,7 @@ public class MainController {
                 gameBonusController.makeActive(this.gameBonusTimer.gameBonus, playerController.getPlayer(), gameController.getBalls(), gameController.getBricks(), view, false);
             }
             this.gameBonusTimer.timeForDestroying.stop();
-            gameBonusTimers.remove(gameBonusTimer);
+            gameBonusTimers.remove(this.gameBonusTimer);
         }
     }
 
