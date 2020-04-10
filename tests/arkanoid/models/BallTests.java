@@ -38,6 +38,11 @@ public class BallTests {
     }
 
     @Test
+    void constructedBallHasProperDirYCoef() {
+        assertEquals(1, ball.getDirYCoef());
+    }
+
+    @Test
     void setPosXWorksCorrectly() {
         ball.setPosX(11);
         assertEquals(11, ball.getPosX());

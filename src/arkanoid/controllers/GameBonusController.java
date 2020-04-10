@@ -209,4 +209,16 @@ public class GameBonusController {
         --counter;
         return counter;
     }
+
+    public void allowAllBonusesForTests() {
+        for (int i = 0; i < this.maxBonusesTheSameTime.length; ++i) {
+            this.maxBonusesTheSameTime[i] = 1;
+        }
+    }
+
+    public void forbidAllBonusesForTests() {
+        for (int i = 0; i < this.maxBonusesTheSameTime.length; ++i) {
+            this.maxBonusesTheSameTime[i] = 0;
+        }
+    }
 }

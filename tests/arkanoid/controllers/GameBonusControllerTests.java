@@ -2,6 +2,7 @@ package arkanoid.controllers;
 
 import arkanoid.models.*;
 import arkanoid.views.View;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -22,6 +23,11 @@ public class GameBonusControllerTests {
     private GameBonusController gameBonusController = new GameBonusController(testView);
     private Game game = new Game(new Player(1, 1, 1, 1, 1));
 
+    @BeforeEach
+    void allowBonuses() {
+        gameBonusController.allowAllBonusesForTests();
+    }
+    
     @Test
     void movePlayerUpBonusShouldChangePlayerYPos() {
         GameBonus gameBonus = new GameBonus(1, 1, 1, 1, BonusEnum.MOVE_PLAYER_UP);
@@ -92,6 +98,24 @@ public class GameBonusControllerTests {
     }
 
     @Test
+    void increaseBallSpeedBonusShouldChangeDirYCoefOfAllBallsByOne() {
+        GameBonus gameBonus = new GameBonus(1, 1, 1, 1, BonusEnum.HIGH_SPEED_BALLS);
+        game.getBalls().clear();
+        Ball ball = new Ball(1, 1, 1, 1, 1);
+        game.getBalls().add(ball);
+        int curDirYCoef = ball.getDirYCoef();
+
+        gameBonusController.makeActive(gameBonus, game.getPlayer(), game.getBalls(), game.getBricks(), testView, true);
+
+        assertEquals(curDirYCoef + 1, ball.getDirYCoef());
+
+
+        gameBonusController.makeActive(gameBonus, game.getPlayer(), game.getBalls(), game.getBricks(), testView, false);
+
+        assertEquals(curDirYCoef, ball.getDirYCoef());
+    }
+
+    @Test
     void multiplyBallsBonusShouldMultiplyAmountOfBallsByTwo() {
         GameBonus gameBonus = new GameBonus(1, 1, 1, 1, BonusEnum.MULTI_BALLS);
         game.getBalls().clear();
@@ -140,6 +164,17 @@ public class GameBonusControllerTests {
         gameBonusController.makeActive(gameBonus, game.getPlayer(), game.getBalls(), game.getBricks(), testView, true);
 
         assertEquals(true, gameBonus.isUsed());
+    }
+
+    @Test
+    void whenBonusFuncIsCalledThenBonusShouldNotChangeStateToUsedIfControllerCanNotActivateBonus() {
+        gameBonusController.forbidAllBonusesForTests();
+
+        GameBonus gameBonus = new GameBonus(1, 1, 1, 1, BonusEnum.SHORT_PLAYER);
+
+        gameBonusController.makeActive(gameBonus, game.getPlayer(), game.getBalls(), game.getBricks(), testView, true);
+
+        assertEquals(false, gameBonus.isUsed());
     }
 
 }
