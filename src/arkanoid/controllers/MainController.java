@@ -268,7 +268,7 @@ public class MainController {
             int playerCenterX = playerController.getPlayer().getPosX() + playerController.getPlayer().getWidth() / 2;
             int diff = Math.abs(ballCenterX - playerCenterX);
             double help = diff * 2D / playerController.getPlayer().getWidth() * Math.abs(GameConstants.getBallDirY());
-            ball.setDirY(Math.max(2, Math.abs(GameConstants.getBallDirY()) - (int)help) * ball.getDirYCoef());
+            ball.setDirY(Math.max(GameConstants.getMinBallSpeedY(), Math.abs(GameConstants.getBallDirY()) - (int)help) * ball.getDirYCoef());
 
             this.ballController.reverseYDir(ball);
             ball.setPosY(this.gameController.getPlayer().getPosY() - ball.getDiameter());

@@ -8,8 +8,9 @@ public class GameConstants {
     private static int gameOverScreenDuration = 3500;
 
     private static int ballRadius = 8;
-    private static int ballDirX = -5;
-    private static int ballDirY = -5;
+    private static int ballDirX = -6;
+    private static int ballDirY = -6;
+    private static int minBallSpeedY = 3;
 
     private static int brickWidth = 100;
     private static int brickHeight = 30;
@@ -106,5 +107,9 @@ public class GameConstants {
 
     public static int getGameOverScreenDuration() {
         return gameOverScreenDuration;
+    }
+
+    public static int getMinBallSpeedY() {
+        return minBallSpeedY;
     }
 }
