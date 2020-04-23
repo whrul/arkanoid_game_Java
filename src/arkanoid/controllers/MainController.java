@@ -452,38 +452,54 @@ public class MainController {
         } else if (keyEvent.getKeyCode() == KeyEvent.VK_RIGHT) {
             this.rightPressed = true;
         } else if (keyEvent.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            if (this.gameController.getGameStatusEnum() == GameStatusEnum.GAME_IS_ON) {
-                this.stopTimers();
-                this.gameController.setGameStatusEnum(GameStatusEnum.GAME_IS_PAUSE);
-                this.updateImage();
-            } else if (this.gameController.getGameStatusEnum() == GameStatusEnum.GAME_IS_PAUSE) {
+            this.escapeKeyPressed();
+        } else if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
+            this.enterKeyPressed();
+        } else if (keyEvent.getKeyCode() == KeyEvent.VK_DOWN) {
+           this.downKeyPressed();
+        } else if (keyEvent.getKeyCode() == KeyEvent.VK_UP) {
+            this.upKeyPressed();
+        }
+    }
+
+    private void upKeyPressed() {
+        GameStatusEnum gameStatusEnum = this.gameController.getGameStatusEnum();
+        if (gameStatusEnum == GameStatusEnum.GAME_IS_OVER || gameStatusEnum == GameStatusEnum.GAME_IS_START || gameStatusEnum == GameStatusEnum.GAME_IS_PAUSE) {
+            this.menuPositionEnum = this.menuPositionEnum.getPrev();
+            this.updateImage();
+        }
+    }
+
+    private void downKeyPressed() {
+        GameStatusEnum gameStatusEnum = this.gameController.getGameStatusEnum();
+        if (gameStatusEnum == GameStatusEnum.GAME_IS_OVER || gameStatusEnum == GameStatusEnum.GAME_IS_START || gameStatusEnum == GameStatusEnum.GAME_IS_PAUSE) {
+            this.menuPositionEnum = this.menuPositionEnum.getNext();
+            this.updateImage();
+        }
+    }
+
+    private void enterKeyPressed() {
+        GameStatusEnum gameStatusEnum = this.gameController.getGameStatusEnum();
+        if (gameStatusEnum == GameStatusEnum.GAME_IS_OVER || gameStatusEnum == GameStatusEnum.GAME_IS_START || gameStatusEnum == GameStatusEnum.GAME_IS_PAUSE) {
+            if (this.menuPositionEnum == MenuPositionEnum.NEW_GAME) {
+                this.restartTheGame();
+            } else if (this.menuPositionEnum == MenuPositionEnum.CONTINUE && gameStatusEnum == GameStatusEnum.GAME_IS_PAUSE) {
                 this.gameController.setGameStatusEnum(GameStatusEnum.GAME_IS_ON);
                 this.runTimers();
+            } else if (this.menuPositionEnum == MenuPositionEnum.EXIT) {
+                this.view.closeView();
             }
-        } else if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
-            GameStatusEnum gameStatusEnum = this.gameController.getGameStatusEnum();
-            if (gameStatusEnum == GameStatusEnum.GAME_IS_OVER || gameStatusEnum == GameStatusEnum.GAME_IS_START || gameStatusEnum == GameStatusEnum.GAME_IS_PAUSE) {
-                if (this.menuPositionEnum == MenuPositionEnum.NEW_GAME) {
-                    this.restartTheGame();
-                } else if (this.menuPositionEnum == MenuPositionEnum.CONTINUE && gameStatusEnum == GameStatusEnum.GAME_IS_PAUSE) {
-                    this.gameController.setGameStatusEnum(GameStatusEnum.GAME_IS_ON);
-                    this.runTimers();
-                } else if (this.menuPositionEnum == MenuPositionEnum.EXIT) {
-                    this.view.closeView();
-                }
-            }
-        } else if (keyEvent.getKeyCode() == KeyEvent.VK_DOWN) {
-            GameStatusEnum gameStatusEnum = this.gameController.getGameStatusEnum();
-            if (gameStatusEnum == GameStatusEnum.GAME_IS_OVER || gameStatusEnum == GameStatusEnum.GAME_IS_START || gameStatusEnum == GameStatusEnum.GAME_IS_PAUSE) {
-                this.menuPositionEnum = this.menuPositionEnum.getNext();
-                this.updateImage();
-            }
-        } else if (keyEvent.getKeyCode() == KeyEvent.VK_UP) {
-            GameStatusEnum gameStatusEnum = this.gameController.getGameStatusEnum();
-            if (gameStatusEnum == GameStatusEnum.GAME_IS_OVER || gameStatusEnum == GameStatusEnum.GAME_IS_START || gameStatusEnum == GameStatusEnum.GAME_IS_PAUSE) {
-                this.menuPositionEnum = this.menuPositionEnum.getPrev();
-                this.updateImage();
-            }
+        }
+    }
+
+    private void escapeKeyPressed() {
+        if (this.gameController.getGameStatusEnum() == GameStatusEnum.GAME_IS_ON) {
+            this.stopTimers();
+            this.gameController.setGameStatusEnum(GameStatusEnum.GAME_IS_PAUSE);
+            this.updateImage();
+        } else if (this.gameController.getGameStatusEnum() == GameStatusEnum.GAME_IS_PAUSE) {
+            this.gameController.setGameStatusEnum(GameStatusEnum.GAME_IS_ON);
+            this.runTimers();
         }
     }
 
