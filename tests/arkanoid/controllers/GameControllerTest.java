@@ -124,9 +124,9 @@ public class GameControllerTest {
     void whenResetGameThenGameHasDefaultValuesForScoresLivesLevel() {
         gameController.resetGame();
 
-        assertEquals(GameConstants.getLevel(), game.getLevel());
-        assertEquals(GameConstants.getScores(), game.getScores());
-        assertEquals(GameConstants.getLives(), game.getLives());
+        assertEquals(GameConstants.LEVEL, game.getLevel());
+        assertEquals(GameConstants.SCORES, game.getScores());
+        assertEquals(GameConstants.LIVES, game.getLives());
     }
 
 }

@@ -8,9 +8,9 @@ public class Game {
     private Vector<Ball> balls = new Vector<Ball>();
     private Vector<GameBonus> gameBonuses = new Vector<GameBonus>();
 
-    private int scores = GameConstants.getScores();
-    private int lives = GameConstants.getLives();
-    private int level = GameConstants.getLevel();
+    private int scores = GameConstants.SCORES;
+    private int lives = GameConstants.LIVES;
+    private int level = GameConstants.LEVEL;
 
     private GameStatusEnum gameStatusEnum = GameStatusEnum.GAME_IS_START;
 

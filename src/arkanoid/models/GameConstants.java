@@ -1,115 +1,31 @@
 package arkanoid.models;
 
 public class GameConstants {
-    private static int mainTimerDelay = 15;
-    private static int bonusAppearTimerDelay = 1000;
-    private static int bonusDestroyTimerDelay = 15000;
-    private static int levelCompleteScreenDuration = 2000;
-    private static int gameOverScreenDuration = 3500;
+    public static final int TIMER_GAME_CYCLE = 15;
+    public static final int TIMER_BONUS_APPEAR = 1000;
+    public static final int TIMER_BONUS_DESTROY = 15000;
+    public static final int DURATION_LEVEL_COMPLETE_SCREEN = 2000;
+    public static final int DURATION_GAME_OVER_SCREEN = 3500;
 
-    private static int ballRadius = 8;
-    private static int ballDirX = -6;
-    private static int ballDirY = -6;
-    private static int minBallSpeedY = 3;
+    public static final int BALL_RADIUS = 8;
+    public static final int BALL_DIR_X = -6;
+    public static final int BALL_DIR_Y = -6;
+    public static final int BALL_MIN_SPEED_Y = 3;
 
-    private static int brickWidth = 100;
-    private static int brickHeight = 30;
-    private static int brickMargin = 10;
+    public static final int BRICK_WIDTH = 100;
+    public static final int BRICK_HEIGHT = 30;
+    public static final int BRICK_MARGIN = 10;
 
-    private static int minSideOfBonus = 30;
-    private static int maxSideOFBonus = 45;
+    public static final int BONUS_MIN_SIDE = 30;
+    public static final int BONUS_MAX_SIDE = 45;
 
-    private static int playerWidth = 125;
-    private static int playerHeight = 20;
-    private static int playerDirX = 15;
+    public static final int PLAYER_WIDTH = 125;
+    public static final int PLAYER_HEIGHT = 20;
+    public static final int PLAYER_DIR_X = 15;
 
-    private static int lives = 100;
-    private static int scores = 0;
-    private static int level = 1;
+    public static final int LIVES = 5;
+    public static final int SCORES = 0;
+    public static final int LEVEL = 1;
 
-    private static int pointsForOneHit = 100;
-
-    public static int getMainTimerDelay() {
-        return mainTimerDelay;
-    }
-
-    public static int getBonusAppearTimerDelay() {
-        return bonusAppearTimerDelay;
-    }
-
-    public static int getBonusDestroyTimerDelay() {
-        return bonusDestroyTimerDelay;
-    }
-
-    public static int getBallRadius() {
-        return ballRadius;
-    }
-
-    public static int getBallDirX() {
-        return ballDirX;
-    }
-
-    public static int getBallDirY() {
-        return ballDirY;
-    }
-
-    public static int getBrickWidth() {
-        return brickWidth;
-    }
-
-    public static int getBrickHeight() {
-        return brickHeight;
-    }
-
-    public static int getBrickMargin() {
-        return brickMargin;
-    }
-
-    public static int getMinSideOfBonus() {
-        return minSideOfBonus;
-    }
-
-    public static int getMaxSideOFBonus() {
-        return maxSideOFBonus;
-    }
-
-    public static int getPlayerWidth() {
-        return playerWidth;
-    }
-
-    public static int getPlayerHeight() {
-        return playerHeight;
-    }
-
-    public static int getPlayerDirX() {
-        return playerDirX;
-    }
-
-    public static int getLives() {
-        return lives;
-    }
-
-    public static int getPointsForOneHit() {
-        return pointsForOneHit;
-    }
-
-    public static int getScores() {
-        return scores;
-    }
-
-    public static int getLevel() {
-        return level;
-    }
-
-    public static int getLevelCompleteScreenDuration() {
-        return levelCompleteScreenDuration;
-    }
-
-    public static int getGameOverScreenDuration() {
-        return gameOverScreenDuration;
-    }
-
-    public static int getMinBallSpeedY() {
-        return minBallSpeedY;
-    }
+    public static final int POINTS_FOR_ONE_BRICK_HIT = 100;
 }

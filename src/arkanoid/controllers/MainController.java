@@ -36,13 +36,13 @@ public class MainController {
         this.gameController = new GameController(new Game(this.playerController.getPlayer()));
         this.gameBonusTimers = new Vector<GameBonusTimer>();
 
-        this.timer = new Timer(GameConstants.getMainTimerDelay(), new ActionListener() {
+        this.timer = new Timer(GameConstants.TIMER_GAME_CYCLE, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 doCycle();
             }
         });
-        this.addingBonusTimer = new Timer(GameConstants.getBonusAppearTimerDelay(), new ActionListener() {
+        this.addingBonusTimer = new Timer(GameConstants.TIMER_BONUS_APPEAR, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 doBonusStuff();
@@ -66,17 +66,17 @@ public class MainController {
 
     private void addBricks() {
         Random random = new Random();
-        int ammountOfBricksInX = this.view.getWidth() / GameConstants.getBrickWidth();
-        int ammoOfBricksInY = this.view.getHeight() / GameConstants.getBrickHeight() / 3;
+        int ammountOfBricksInX = this.view.getWidth() / GameConstants.BRICK_WIDTH;
+        int ammoOfBricksInY = this.view.getHeight() / GameConstants.BRICK_HEIGHT / 3;
         int rightSideOfBrick = 0;
         for (int i = 0 ; i < ammountOfBricksInX; ++i) {
             for (int j = 0; j < ammoOfBricksInY; ++j) {
                 if (random.nextBoolean()) {
-                    rightSideOfBrick = (i + 1) * GameConstants.getBrickMargin() + i * GameConstants.getBrickWidth() + GameConstants.getBrickWidth();
+                    rightSideOfBrick = (i + 1) * GameConstants.BRICK_MARGIN + i * GameConstants.BRICK_WIDTH + GameConstants.BRICK_WIDTH;
                     if (rightSideOfBrick > this.view.getWidth()) {
                         continue;
                     }
-                    this.gameController.addBrick(new Brick((i + 1) * GameConstants.getBrickMargin() + i * GameConstants.getBrickWidth(), (j + 1) * GameConstants.getBrickMargin() + j * GameConstants.getBrickHeight(), GameConstants.getBrickWidth(), GameConstants.getBrickHeight(), random.nextInt(this.gameController.getLevel() + 1) + 1));
+                    this.gameController.addBrick(new Brick((i + 1) * GameConstants.BRICK_MARGIN + i * GameConstants.BRICK_WIDTH, (j + 1) * GameConstants.BRICK_MARGIN + j * GameConstants.BRICK_HEIGHT, GameConstants.BRICK_WIDTH, GameConstants.BRICK_HEIGHT, random.nextInt(this.gameController.getLevel() + 1) + 1));
                 }
             }
         }
@@ -102,7 +102,7 @@ public class MainController {
     private void doBonusStuff() {
         Random random = new Random();
         if (random.nextBoolean()) {
-            int sizeOfSide = GameConstants.getMinSideOfBonus() + random.nextInt(GameConstants.getMaxSideOFBonus() - GameConstants.getMinSideOfBonus());
+            int sizeOfSide = GameConstants.BONUS_MIN_SIDE + random.nextInt(GameConstants.BONUS_MAX_SIDE - GameConstants.BONUS_MIN_SIDE);
             GameBonus gameBonus = new GameBonus(random.nextInt(this.view.getWidth() - sizeOfSide), random.nextInt(this.getPlayer().getPosY() - sizeOfSide),  sizeOfSide, sizeOfSide, Arrays.asList(BonusEnum.values()).get(random.nextInt(BonusEnum.values().length)));
             this.gameController.addGameBonus(gameBonus);
             this.gameBonusTimers.add(new GameBonusTimer(gameBonus));
@@ -133,7 +133,7 @@ public class MainController {
             this.stopTimers();
             this.gameController.setGameStatusEnum(GameStatusEnum.LEVEL_COMPLETE);
             this.updateImage();
-            new Timer(GameConstants.getLevelCompleteScreenDuration(), new ActionListener() {
+            new Timer(GameConstants.DURATION_LEVEL_COMPLETE_SCREEN, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent actionEvent) {
                     levelUp();
@@ -184,7 +184,7 @@ public class MainController {
                 this.stopTimers();
                 this.gameController.setGameStatusEnum(GameStatusEnum.GAME_IS_OVER);
                 this.updateImage();
-                new Timer(GameConstants.getGameOverScreenDuration(), new ActionListener() {
+                new Timer(GameConstants.DURATION_GAME_OVER_SCREEN, new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent actionEvent) {
                         gameController.setGameStatusEnum(GameStatusEnum.GAME_IS_START);
@@ -205,9 +205,9 @@ public class MainController {
     }
 
     private void resetPlayerAttributes() {
-        this.gameController.getPlayer().setWidth(GameConstants.getPlayerWidth());
-        this.gameController.getPlayer().setHeight(GameConstants.getPlayerHeight());
-        this.gameController.getPlayer().setDirX(GameConstants.getPlayerDirX());
+        this.gameController.getPlayer().setWidth(GameConstants.PLAYER_WIDTH);
+        this.gameController.getPlayer().setHeight(GameConstants.PLAYER_HEIGHT);
+        this.gameController.getPlayer().setDirX(GameConstants.PLAYER_DIR_X);
         this.gameController.getPlayer().setPosX(this.view.getWidth() / 2 - this.gameController.getPlayer().getWidth() / 2);
         this.gameController.getPlayer().setPosY(this.view.getHeight() - this.gameController.getPlayer().getHeight() * 3);
     }
@@ -267,8 +267,8 @@ public class MainController {
             int ballCenterX = ball.getCenterX();
             int playerCenterX = playerController.getPlayer().getPosX() + playerController.getPlayer().getWidth() / 2;
             int diff = Math.abs(ballCenterX - playerCenterX);
-            double help = diff * 2D / playerController.getPlayer().getWidth() * Math.abs(GameConstants.getBallDirY());
-            ball.setDirY(Math.max(GameConstants.getMinBallSpeedY(), Math.abs(GameConstants.getBallDirY()) - (int)help) * ball.getDirYCoef());
+            double help = diff * 2D / playerController.getPlayer().getWidth() * Math.abs(GameConstants.BALL_DIR_Y);
+            ball.setDirY(Math.max(GameConstants.BALL_MIN_SPEED_Y, Math.abs(GameConstants.BALL_DIR_Y) - (int)help) * ball.getDirYCoef());
 
             this.ballController.reverseYDir(ball);
             ball.setPosY(this.gameController.getPlayer().getPosY() - ball.getDiameter());
@@ -321,7 +321,7 @@ public class MainController {
             if (wasHitted) {
                 this.brickController.doDamage(bricks.get(i));
                 if (this.brickController.getHitsForDestroying(bricks.get(i)) == 0) {
-                    this.gameController.addScores(GameConstants.getPointsForOneHit() * bricks.get(i).getHitsForDestroyingStartVal());
+                    this.gameController.addScores(GameConstants.POINTS_FOR_ONE_BRICK_HIT * bricks.get(i).getHitsForDestroyingStartVal());
                     this.gameController.destroyBrick(bricks.get(i));
                 }
             }
@@ -523,7 +523,7 @@ public class MainController {
         if (new Random().nextBoolean()) {
             sign = -1;
         }
-        this.gameController.addBall(new Ball(GameConstants.getBallRadius(), this.view.getWidth() / 2, this.view.getHeight() / 2, GameConstants.getBallDirX() * sign, GameConstants.getBallDirY()));
+        this.gameController.addBall(new Ball(GameConstants.BALL_RADIUS, this.view.getWidth() / 2, this.view.getHeight() / 2, GameConstants.BALL_DIR_X * sign, GameConstants.BALL_DIR_Y));
     }
 
     private void runTimers() {
@@ -570,7 +570,7 @@ public class MainController {
         public GameBonusTimer(GameBonus gameBonus) {
             this.gameBonus = gameBonus;
             this.counter = 10;
-            this.timeForDestroying = new Timer(Math.max(GameConstants.getBonusDestroyTimerDelay() / 10, 1), new EndOfBonusCycle(this));
+            this.timeForDestroying = new Timer(Math.max(GameConstants.TIMER_BONUS_DESTROY / 10, 1), new EndOfBonusCycle(this));
             this.timeForDestroying.restart();
         }
 

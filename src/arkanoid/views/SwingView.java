@@ -74,16 +74,16 @@ public class SwingView extends JPanel implements View {
 
     private void prepareLevelCompleteScreen() {
         levelComplete = new JLabel("LEVEL COMPLETE");
-        levelComplete.setFont(new Font("TimesRoman", Font.BOLD, SwingViewConstants.getLevelCompleteFontSize()));
+        levelComplete.setFont(new Font("TimesRoman", Font.BOLD, SwingViewConstants.LEVEL_COMPLETE_FONT_SIZE));
         levelComplete.setForeground(Color.WHITE);
     }
 
     private void prepareGameOverScreen() {
         gameOver = new JLabel("GAME OVER");
-        gameOver.setFont(new Font("TimesRoman", Font.BOLD, SwingViewConstants.getGameOverFontSize()));
+        gameOver.setFont(new Font("TimesRoman", Font.BOLD, SwingViewConstants.GAME_OVER_FONT_SIZE));
         gameOver.setForeground(Color.WHITE);
         gameOverScores = new JLabel("Scores");
-        gameOverScores.setFont(new Font("TimesRoman", Font.BOLD, SwingViewConstants.getGameOverFontSize()));
+        gameOverScores.setFont(new Font("TimesRoman", Font.BOLD, SwingViewConstants.GAME_OVER_FONT_SIZE));
         gameOverScores.setForeground(Color.WHITE);
     }
 
@@ -91,22 +91,22 @@ public class SwingView extends JPanel implements View {
         this.menuLabels = new Vector<JLabel>();
         for (MenuPositionEnum menuPositionEnum : Arrays.asList(MenuPositionEnum.values())) {
             this.menuLabels.add(new JLabel(menuPositionEnum.name()));
-            this.menuLabels.lastElement().setFont(new Font("TimesRoman", Font.BOLD, SwingViewConstants.getMenuLabelsFontSize()));
+            this.menuLabels.lastElement().setFont(new Font("TimesRoman", Font.BOLD, SwingViewConstants.MENU_LABELS_FONT_SIZE));
             this.menuLabels.lastElement().setForeground(Color.LIGHT_GRAY);
         }
     }
 
     private void createGameLabels() {
         this.scores = new JLabel("Scores: " + this.mainController.getScores());
-        this.scores.setFont(new Font("TimesRoman", Font.BOLD, SwingViewConstants.getGameLabelsFontSize()));
+        this.scores.setFont(new Font("TimesRoman", Font.BOLD, SwingViewConstants.GAME_LABELS_FONT_SIZE));
         this.scores.setForeground(Color.white);
 
         this.lives = new JLabel("Lives: " + this.mainController.getLives());
-        this.lives.setFont(new Font("TimesRoman", Font.BOLD, SwingViewConstants.getGameLabelsFontSize()));
+        this.lives.setFont(new Font("TimesRoman", Font.BOLD, SwingViewConstants.GAME_LABELS_FONT_SIZE));
         this.lives.setForeground(Color.white);
 
         this.level = new JLabel("Level: " + this.mainController.getLevel());
-        this.level.setFont(new Font("TimesRoman", Font.BOLD, SwingViewConstants.getGameLabelsFontSize()));
+        this.level.setFont(new Font("TimesRoman", Font.BOLD, SwingViewConstants.GAME_LABELS_FONT_SIZE));
         this.level.setForeground(Color.white);
     }
 
@@ -229,13 +229,13 @@ public class SwingView extends JPanel implements View {
 
     private void updateGameLabels() {
         this.scores.setText("Scores: " + this.mainController.getScores());
-        this.scores.setBounds(SwingViewConstants.getGameLabelsMarginX(), SwingViewConstants.getGameLabelsMarginY(), this.scores.getPreferredSize().width, this.scores.getPreferredSize().height);
+        this.scores.setBounds(SwingViewConstants.GAME_LABELS_MARGIN_X, SwingViewConstants.GAME_LABELS_MARGIN_Y, this.scores.getPreferredSize().width, this.scores.getPreferredSize().height);
 //
         this.lives.setText("Lives: " + this.mainController.getLives());
-        this.lives.setBounds(SwingViewConstants.getGameLabelsMarginX(), SwingViewConstants.getGameLabelsMarginY() + this.lives.getPreferredSize().height, this.lives.getPreferredSize().width, this.lives.getPreferredSize().height);
+        this.lives.setBounds(SwingViewConstants.GAME_LABELS_MARGIN_X, SwingViewConstants.GAME_LABELS_MARGIN_Y + this.lives.getPreferredSize().height, this.lives.getPreferredSize().width, this.lives.getPreferredSize().height);
 
         this.level.setText("Level: " + this.mainController.getLevel());
-        this.level.setBounds(SwingViewConstants.getGameLabelsMarginX(), SwingViewConstants.getGameLabelsMarginY() + this.scores.getPreferredSize().height + this.lives.getPreferredSize().height, this.level.getPreferredSize().width, this.level.getPreferredSize().height);
+        this.level.setBounds(SwingViewConstants.GAME_LABELS_MARGIN_X, SwingViewConstants.GAME_LABELS_MARGIN_Y + this.scores.getPreferredSize().height + this.lives.getPreferredSize().height, this.level.getPreferredSize().width, this.level.getPreferredSize().height);
 
         this.add(this.scores);
         this.add(this.lives);
@@ -275,7 +275,7 @@ public class SwingView extends JPanel implements View {
         for (int i = 0; i < gameBonusTimers.size(); ++i) {
             if (gameBonusTimers.get(i).bonusIsActive()) {
                 graphics.setColor(this.colors.get(gameBonusTimers.get(i).getGameBonus().getBonusEnum().getIntRepr() % this.colors.size()));
-                graphics.fillRect(SwingViewConstants.getActiveBonusSideMarginX()  + (SwingViewConstants.getActiveBonusSideMarginX() + SwingViewConstants.getActiveBonusSide()) * i, this.height - SwingViewConstants.getActiveBonusYAboveBottom(), SwingViewConstants.getActiveBonusSide(), SwingViewConstants.getActiveBonusSide() );
+                graphics.fillRect(SwingViewConstants.ACTIVE_BONUS_SIDE_MARGIN_X  + (SwingViewConstants.ACTIVE_BONUS_SIDE_MARGIN_X + SwingViewConstants.ACTIVE_BONUS_SIDE) * i, this.height - SwingViewConstants.ACTIVE_BONUS_BOTTOM_MARGIN, SwingViewConstants.ACTIVE_BONUS_SIDE, SwingViewConstants.ACTIVE_BONUS_SIDE);
             }
         }
     }

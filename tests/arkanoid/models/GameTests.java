@@ -32,17 +32,17 @@ public class GameTests {
 
     @Test
     void constructedGameHasProperScores() {
-        assertEquals(GameConstants.getScores(), game.getScores());
+        assertEquals(GameConstants.SCORES, game.getScores());
     }
 
     @Test
     void constructedGameHasProperLives() {
-        assertEquals(GameConstants.getLives(), game.getLives());
+        assertEquals(GameConstants.LIVES, game.getLives());
     }
 
     @Test
     void constructedGameHasProperLevel() {
-        assertEquals(GameConstants.getLevel(), game.getLevel());
+        assertEquals(GameConstants.LEVEL, game.getLevel());
     }
 
     @Test

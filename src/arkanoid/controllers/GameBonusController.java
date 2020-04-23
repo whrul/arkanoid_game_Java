@@ -139,7 +139,7 @@ public class GameBonusController {
 
     private int shortPlayerBonusMaxTheSameTime() {
         int counter = 0;
-        int playerWidth = GameConstants.getPlayerWidth();
+        int playerWidth = GameConstants.PLAYER_WIDTH;
         while (playerWidth > 20) {
             playerWidth /= 2;
             ++counter;
@@ -150,7 +150,7 @@ public class GameBonusController {
 
     private int longPlayerBonusMaxTheSameTime(View view) {
         int counter = 0;
-        int playerWidth = GameConstants.getPlayerWidth();
+        int playerWidth = GameConstants.PLAYER_WIDTH;
         while (playerWidth < view.getWidth()) {
             playerWidth *= 2;
             ++counter;
@@ -165,10 +165,10 @@ public class GameBonusController {
 
     private int highSpeedBallsBonusMaxTheSameTime() {
         int counter = 0;
-        int ballSpeedX = Math.abs(GameConstants.getBallDirX());
-        int ballSpeedY = Math.abs(GameConstants.getBallDirX());
+        int ballSpeedX = Math.abs(GameConstants.BALL_DIR_X);
+        int ballSpeedY = Math.abs(GameConstants.BALL_DIR_Y);
 
-        while (ballSpeedX < GameConstants.getBallRadius() * 2 && ballSpeedY < GameConstants.getBallRadius() * 2) {
+        while (ballSpeedX < GameConstants.BALL_RADIUS * 2 && ballSpeedY < GameConstants.BALL_RADIUS * 2) {
             ballSpeedX *= 2;
             ballSpeedY *= 2;
             ++counter;
@@ -179,7 +179,7 @@ public class GameBonusController {
 
     private int lowSpeedPlayerBonusMaxTheSameTime() {
         int counter = 0;
-        int playerSpeed = Math.abs(GameConstants.getPlayerDirX());
+        int playerSpeed = Math.abs(GameConstants.PLAYER_DIR_X);
         while (playerSpeed > 0) {
             playerSpeed /= 2;
             ++counter;
@@ -190,8 +190,8 @@ public class GameBonusController {
 
     private int highSpeedPlayerBonusMaxTheSameTime() {
         int counter = 0;
-        int playerSpeed = Math.abs(GameConstants.getPlayerDirX());
-        while (playerSpeed < GameConstants.getPlayerWidth() / 2) {
+        int playerSpeed = Math.abs(GameConstants.PLAYER_DIR_X);
+        while (playerSpeed < GameConstants.PLAYER_WIDTH / 2) {
             playerSpeed *= 2;
             ++counter;
         }
@@ -201,9 +201,9 @@ public class GameBonusController {
 
     private int movePlayerUpBonusMaxTheSameTime(View view) {
         int counter = 0;
-        int playerPosY = view.getHeight() - GameConstants.getPlayerHeight() * 3;
+        int playerPosY = view.getHeight() - GameConstants.PLAYER_HEIGHT * 3;
         while (playerPosY > view.getHeight() / 2) {
-            playerPosY -= GameConstants.getPlayerHeight() * 2;
+            playerPosY -= GameConstants.PLAYER_HEIGHT * 2;
             ++counter;
         }
         --counter;
