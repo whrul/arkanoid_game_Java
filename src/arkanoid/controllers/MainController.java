@@ -319,7 +319,8 @@ public class MainController {
                 wasHitted = true;
             }
             if (wasHitted) {
-                if (this.brickController.getDamaged(bricks.get(i)) == 0) {
+                this.brickController.doDamage(bricks.get(i));
+                if (this.brickController.getHitsForDestroying(bricks.get(i)) == 0) {
                     this.gameController.addScores(GameConstants.getPointsForOneHit() * bricks.get(i).getHitsForDestroyingStartVal());
                     this.gameController.destroyBrick(bricks.get(i));
                 }

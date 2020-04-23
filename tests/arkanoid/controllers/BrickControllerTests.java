@@ -11,12 +11,21 @@ public class BrickControllerTests {
     private BrickController brickController = new BrickController();
 
     @Test
-    void getDemagedShouldDecreaseNumOfHitsForDestroyingByOne() {
+    void doDamageShouldDecreaseNumOfHitsForDestroyingByOne() {
         brick.setHitsForDestroying(5);
 
-        brickController.getDamaged(brick);
+        brickController.doDamage(brick);
 
         assertEquals(4, brick.getHitsForDestroying());
+    }
+
+    @Test
+    void getHitsForDestroyingWorksCorrectly() {
+        brick.setHitsForDestroying(7);
+
+        int hitsForDestroying = brickController.getHitsForDestroying(brick);
+
+        assertEquals(7, hitsForDestroying);
     }
 
 }
