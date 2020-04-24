@@ -75,9 +75,9 @@ public class GameController {
         this.game.getBalls().clear();
         this.game.getGameBonuses().clear();
 
-        this.game.setScores(GameConstants.getScores());
-        this.game.setLives(GameConstants.getLives());
-        this.game.setLevel(GameConstants.getLevel());
+        this.game.setScores(GameConstants.SCORES);
+        this.game.setLives(GameConstants.LIVES);
+        this.game.setLevel(GameConstants.LEVEL);
     }
 
 }

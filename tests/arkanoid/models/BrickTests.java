@@ -10,9 +10,15 @@ public class BrickTests {
     private int posY = 10;
     private int width = 15;
     private int height = 20;
-    private int hitsForDestroying = 25;
+    private int hitsForDestroyingStartVal = 25;
 
-    private Brick brick = new Brick(posX, posY, width, height, hitsForDestroying);
+    private Brick brick = Brick.builder()
+            .setPosX(posX)
+            .setPosY(posY)
+            .setWidth(width)
+            .setHeight(height)
+            .setHitsForDestroyingStartVal(hitsForDestroyingStartVal)
+            .build();
 
 
     @Test
@@ -36,14 +42,22 @@ public class BrickTests {
     }
 
     @Test
+    void constructedBrickHasProperHitsForDestroyingStartVal() {
+        assertEquals(hitsForDestroyingStartVal, brick.getHitsForDestroyingStartVal());
+    }
+
+    @Test
     void constructedBrickHasProperHitsForDestroying() {
-        assertEquals(hitsForDestroying, brick.getHitsForDestroying());
+        assertEquals(brick.getHitsForDestroyingStartVal(), brick.getHitsForDestroying());
     }
 
     @Test
     void setHitsForDestroyingWorksCorrectly() {
-        brick.setHitsForDestroying(11);
-        assertEquals(11, brick.getHitsForDestroying());
+        int newHitsForDestroying = brick.getHitsForDestroying() + 1;
+
+        brick.setHitsForDestroying(newHitsForDestroying);
+
+        assertEquals(newHitsForDestroying, brick.getHitsForDestroying());
     }
 
 

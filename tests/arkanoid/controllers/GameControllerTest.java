@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GameControllerTest {
 
-    private Player player = new Player(0, 0, 0, 0, 0);
+    private Player player = Player.builder().build();
     private Game game = new Game(player);
 
     private GameController gameController = new GameController(game);
@@ -15,7 +15,8 @@ public class GameControllerTest {
     @Test
     void whenAddBrickIsCalledOnControllerNumOfBricksShouldIncreaseInModel() {
         int curSize = game.getBricks().size();
-        gameController.addBrick(new Brick(1, 1, 1, 1, 1));
+
+        gameController.addBrick(Brick.builder().build());
 
         assertEquals(1, game.getBricks().size() - curSize);
     }
@@ -23,7 +24,8 @@ public class GameControllerTest {
     @Test
     void whenAddBallIsCalledOnControllerNumOfBallsShouldIncreaseInModel() {
         int curSize = game.getBalls().size();
-        gameController.addBall(new Ball(1, 1, 1, 1, 1));
+
+        gameController.addBall(Ball.builder().build());
 
         assertEquals(1, game.getBalls().size() - curSize);
     }
@@ -31,16 +33,17 @@ public class GameControllerTest {
     @Test
     void whenAddGameBonusIsCalledOnControllerNumOfGameBonusesShouldIncreaseInModel() {
         int curSize = game.getGameBonuses().size();
-        gameController.addGameBonus(new GameBonus(1, 1, 1, 1, BonusEnum.MOVE_PLAYER_UP));
+        gameController.addGameBonus(GameBonus.builder().build());
 
         assertEquals(1, game.getGameBonuses().size() - curSize);
     }
 
     @Test
     void whenDestroyBrickIsCalledOnControllerNumOfBricksShouldDecreaseInModel() {
-        Brick brick = new Brick(1, 1, 1, 1, 1);
+        Brick brick = Brick.builder().build();
         gameController.addBrick(brick);
         int curSize = game.getBricks().size();
+
         gameController.destroyBrick(brick);
 
         assertEquals(-1, game.getBricks().size() - curSize);
@@ -48,7 +51,7 @@ public class GameControllerTest {
 
     @Test
     void whenDestroyBallIsCalledOnControllerNumOfBallsShouldDecreaseInModel() {
-        Ball ball = new Ball(1, 1, 1, 1, 1);
+        Ball ball = Ball.builder().build();
         gameController.addBall(ball);
         int curSize = game.getBalls().size();
         gameController.destroyBall(ball);
@@ -58,7 +61,7 @@ public class GameControllerTest {
 
     @Test
     void whenDestroyGameBonusIsCalledOnControllerNumOfGameBonusesShouldDecreaseInModel() {
-        GameBonus gameBonus = new GameBonus(1, 1, 1, 1, BonusEnum.MOVE_PLAYER_UP);
+        GameBonus gameBonus = GameBonus.builder().build();
         gameController.addGameBonus(gameBonus);
         int curSize = game.getGameBonuses().size();
         gameController.destroyGameBonus(gameBonus);
@@ -124,9 +127,9 @@ public class GameControllerTest {
     void whenResetGameThenGameHasDefaultValuesForScoresLivesLevel() {
         gameController.resetGame();
 
-        assertEquals(GameConstants.getLevel(), game.getLevel());
-        assertEquals(GameConstants.getScores(), game.getScores());
-        assertEquals(GameConstants.getLives(), game.getLives());
+        assertEquals(GameConstants.LEVEL, game.getLevel());
+        assertEquals(GameConstants.SCORES, game.getScores());
+        assertEquals(GameConstants.LIVES, game.getLives());
     }
 
 }

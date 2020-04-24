@@ -32,17 +32,17 @@ public class MainController {
     public MainController() {
         this.ballController = new BallController();
         this.brickController = new BrickController();
-        this.playerController = new PlayerController(new Player());
+        this.playerController = new PlayerController(Player.builder().build());
         this.gameController = new GameController(new Game(this.playerController.getPlayer()));
         this.gameBonusTimers = new Vector<GameBonusTimer>();
 
-        this.timer = new Timer(GameConstants.getMainTimerDelay(), new ActionListener() {
+        this.timer = new Timer(GameConstants.TIMER_GAME_CYCLE, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 doCycle();
             }
         });
-        this.addingBonusTimer = new Timer(GameConstants.getBonusAppearTimerDelay(), new ActionListener() {
+        this.addingBonusTimer = new Timer(GameConstants.TIMER_BONUS_APPEAR, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 doBonusStuff();
@@ -66,17 +66,24 @@ public class MainController {
 
     private void addBricks() {
         Random random = new Random();
-        int ammountOfBricksInX = this.view.getWidth() / GameConstants.getBrickWidth();
-        int ammoOfBricksInY = this.view.getHeight() / GameConstants.getBrickHeight() / 3;
+        int ammountOfBricksInX = this.view.getWidth() / GameConstants.BRICK_WIDTH;
+        int ammoOfBricksInY = this.view.getHeight() / GameConstants.BRICK_HEIGHT / 3;
         int rightSideOfBrick = 0;
         for (int i = 0 ; i < ammountOfBricksInX; ++i) {
             for (int j = 0; j < ammoOfBricksInY; ++j) {
                 if (random.nextBoolean()) {
-                    rightSideOfBrick = (i + 1) * GameConstants.getBrickMargin() + i * GameConstants.getBrickWidth() + GameConstants.getBrickWidth();
+                    rightSideOfBrick = (i + 1) * GameConstants.BRICK_MARGIN + i * GameConstants.BRICK_WIDTH + GameConstants.BRICK_WIDTH;
                     if (rightSideOfBrick > this.view.getWidth()) {
                         continue;
                     }
-                    this.gameController.addBrick(new Brick((i + 1) * GameConstants.getBrickMargin() + i * GameConstants.getBrickWidth(), (j + 1) * GameConstants.getBrickMargin() + j * GameConstants.getBrickHeight(), GameConstants.getBrickWidth(), GameConstants.getBrickHeight(), random.nextInt(this.gameController.getLevel() + 1) + 1));
+                    this.gameController.addBrick(
+                            Brick.builder()
+                            .setPosX((i + 1) * GameConstants.BRICK_MARGIN + i * GameConstants.BRICK_WIDTH)
+                            .setPosY((j + 1) * GameConstants.BRICK_MARGIN + j * GameConstants.BRICK_HEIGHT)
+                            .setWidth(GameConstants.BRICK_WIDTH)
+                            .setHeight(GameConstants.BRICK_HEIGHT)
+                            .setHitsForDestroyingStartVal(random.nextInt(this.gameController.getLevel() + 1) + 1)
+                        .build());
                 }
             }
         }
@@ -102,8 +109,15 @@ public class MainController {
     private void doBonusStuff() {
         Random random = new Random();
         if (random.nextBoolean()) {
-            int sizeOfSide = GameConstants.getMinSideOfBonus() + random.nextInt(GameConstants.getMaxSideOFBonus() - GameConstants.getMinSideOfBonus());
-            GameBonus gameBonus = new GameBonus(random.nextInt(this.view.getWidth() - sizeOfSide), random.nextInt(this.getPlayer().getPosY() - sizeOfSide),  sizeOfSide, sizeOfSide, Arrays.asList(BonusEnum.values()).get(random.nextInt(BonusEnum.values().length)));
+            int sizeOfSide = GameConstants.BONUS_MIN_SIDE + random.nextInt(GameConstants.BONUS_MAX_SIDE - GameConstants.BONUS_MIN_SIDE);
+            GameBonus gameBonus = GameBonus.builder()
+                    .setPosX(random.nextInt(this.view.getWidth() - sizeOfSide))
+                    .setPosY(random.nextInt(this.getPlayer().getPosY() - sizeOfSide))
+                    .setWidth(sizeOfSide)
+                    .setHeight(sizeOfSide)
+                    .setBonusEnum( Arrays.asList(BonusEnum.values()).get(random.nextInt(BonusEnum.values().length)))
+                    .setUsed(false)
+                .build();
             this.gameController.addGameBonus(gameBonus);
             this.gameBonusTimers.add(new GameBonusTimer(gameBonus));
         }
@@ -133,7 +147,7 @@ public class MainController {
             this.stopTimers();
             this.gameController.setGameStatusEnum(GameStatusEnum.LEVEL_COMPLETE);
             this.updateImage();
-            new Timer(GameConstants.getLevelCompleteScreenDuration(), new ActionListener() {
+            new Timer(GameConstants.DURATION_LEVEL_COMPLETE_SCREEN, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent actionEvent) {
                     levelUp();
@@ -184,7 +198,7 @@ public class MainController {
                 this.stopTimers();
                 this.gameController.setGameStatusEnum(GameStatusEnum.GAME_IS_OVER);
                 this.updateImage();
-                new Timer(GameConstants.getGameOverScreenDuration(), new ActionListener() {
+                new Timer(GameConstants.DURATION_GAME_OVER_SCREEN, new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent actionEvent) {
                         gameController.setGameStatusEnum(GameStatusEnum.GAME_IS_START);
@@ -205,9 +219,9 @@ public class MainController {
     }
 
     private void resetPlayerAttributes() {
-        this.gameController.getPlayer().setWidth(GameConstants.getPlayerWidth());
-        this.gameController.getPlayer().setHeight(GameConstants.getPlayerHeight());
-        this.gameController.getPlayer().setDirX(GameConstants.getPlayerDirX());
+        this.gameController.getPlayer().setWidth(GameConstants.PLAYER_WIDTH);
+        this.gameController.getPlayer().setHeight(GameConstants.PLAYER_HEIGHT);
+        this.gameController.getPlayer().setDirX(GameConstants.PLAYER_DIR_X);
         this.gameController.getPlayer().setPosX(this.view.getWidth() / 2 - this.gameController.getPlayer().getWidth() / 2);
         this.gameController.getPlayer().setPosY(this.view.getHeight() - this.gameController.getPlayer().getHeight() * 3);
     }
@@ -267,8 +281,8 @@ public class MainController {
             int ballCenterX = ball.getCenterX();
             int playerCenterX = playerController.getPlayer().getPosX() + playerController.getPlayer().getWidth() / 2;
             int diff = Math.abs(ballCenterX - playerCenterX);
-            double help = diff * 2D / playerController.getPlayer().getWidth() * Math.abs(GameConstants.getBallDirY());
-            ball.setDirY(Math.max(GameConstants.getMinBallSpeedY(), Math.abs(GameConstants.getBallDirY()) - (int)help) * ball.getDirYCoef());
+            double help = diff * 2D / playerController.getPlayer().getWidth() * Math.abs(GameConstants.BALL_DIR_Y);
+            ball.setDirY(Math.max(GameConstants.BALL_MIN_SPEED_Y, Math.abs(GameConstants.BALL_DIR_Y) - (int)help) * ball.getDirYCoef());
 
             this.ballController.reverseYDir(ball);
             ball.setPosY(this.gameController.getPlayer().getPosY() - ball.getDiameter());
@@ -319,8 +333,9 @@ public class MainController {
                 wasHitted = true;
             }
             if (wasHitted) {
-                if (this.brickController.getDamaged(bricks.get(i)) == 0) {
-                    this.gameController.addScores(GameConstants.getPointsForOneHit() * bricks.get(i).getHitsForDestroyingStartVal());
+                this.brickController.doDamage(bricks.get(i));
+                if (this.brickController.getHitsForDestroying(bricks.get(i)) == 0) {
+                    this.gameController.addScores(GameConstants.POINTS_FOR_ONE_BRICK_HIT * bricks.get(i).getHitsForDestroyingStartVal());
                     this.gameController.destroyBrick(bricks.get(i));
                 }
             }
@@ -451,38 +466,54 @@ public class MainController {
         } else if (keyEvent.getKeyCode() == KeyEvent.VK_RIGHT) {
             this.rightPressed = true;
         } else if (keyEvent.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            if (this.gameController.getGameStatusEnum() == GameStatusEnum.GAME_IS_ON) {
-                this.stopTimers();
-                this.gameController.setGameStatusEnum(GameStatusEnum.GAME_IS_PAUSE);
-                this.updateImage();
-            } else if (this.gameController.getGameStatusEnum() == GameStatusEnum.GAME_IS_PAUSE) {
+            this.escapeKeyPressed();
+        } else if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
+            this.enterKeyPressed();
+        } else if (keyEvent.getKeyCode() == KeyEvent.VK_DOWN) {
+           this.downKeyPressed();
+        } else if (keyEvent.getKeyCode() == KeyEvent.VK_UP) {
+            this.upKeyPressed();
+        }
+    }
+
+    private void upKeyPressed() {
+        GameStatusEnum gameStatusEnum = this.gameController.getGameStatusEnum();
+        if (gameStatusEnum == GameStatusEnum.GAME_IS_OVER || gameStatusEnum == GameStatusEnum.GAME_IS_START || gameStatusEnum == GameStatusEnum.GAME_IS_PAUSE) {
+            this.menuPositionEnum = this.menuPositionEnum.getPrev();
+            this.updateImage();
+        }
+    }
+
+    private void downKeyPressed() {
+        GameStatusEnum gameStatusEnum = this.gameController.getGameStatusEnum();
+        if (gameStatusEnum == GameStatusEnum.GAME_IS_OVER || gameStatusEnum == GameStatusEnum.GAME_IS_START || gameStatusEnum == GameStatusEnum.GAME_IS_PAUSE) {
+            this.menuPositionEnum = this.menuPositionEnum.getNext();
+            this.updateImage();
+        }
+    }
+
+    private void enterKeyPressed() {
+        GameStatusEnum gameStatusEnum = this.gameController.getGameStatusEnum();
+        if (gameStatusEnum == GameStatusEnum.GAME_IS_OVER || gameStatusEnum == GameStatusEnum.GAME_IS_START || gameStatusEnum == GameStatusEnum.GAME_IS_PAUSE) {
+            if (this.menuPositionEnum == MenuPositionEnum.NEW_GAME) {
+                this.restartTheGame();
+            } else if (this.menuPositionEnum == MenuPositionEnum.CONTINUE && gameStatusEnum == GameStatusEnum.GAME_IS_PAUSE) {
                 this.gameController.setGameStatusEnum(GameStatusEnum.GAME_IS_ON);
                 this.runTimers();
+            } else if (this.menuPositionEnum == MenuPositionEnum.EXIT) {
+                this.view.closeView();
             }
-        } else if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
-            GameStatusEnum gameStatusEnum = this.gameController.getGameStatusEnum();
-            if (gameStatusEnum == GameStatusEnum.GAME_IS_OVER || gameStatusEnum == GameStatusEnum.GAME_IS_START || gameStatusEnum == GameStatusEnum.GAME_IS_PAUSE) {
-                if (this.menuPositionEnum == MenuPositionEnum.NEW_GAME) {
-                    this.restartTheGame();
-                } else if (this.menuPositionEnum == MenuPositionEnum.CONTINUE && gameStatusEnum == GameStatusEnum.GAME_IS_PAUSE) {
-                    this.gameController.setGameStatusEnum(GameStatusEnum.GAME_IS_ON);
-                    this.runTimers();
-                } else if (this.menuPositionEnum == MenuPositionEnum.EXIT) {
-                    this.view.closeView();
-                }
-            }
-        } else if (keyEvent.getKeyCode() == KeyEvent.VK_DOWN) {
-            GameStatusEnum gameStatusEnum = this.gameController.getGameStatusEnum();
-            if (gameStatusEnum == GameStatusEnum.GAME_IS_OVER || gameStatusEnum == GameStatusEnum.GAME_IS_START || gameStatusEnum == GameStatusEnum.GAME_IS_PAUSE) {
-                this.menuPositionEnum = this.menuPositionEnum.getNext();
-                this.updateImage();
-            }
-        } else if (keyEvent.getKeyCode() == KeyEvent.VK_UP) {
-            GameStatusEnum gameStatusEnum = this.gameController.getGameStatusEnum();
-            if (gameStatusEnum == GameStatusEnum.GAME_IS_OVER || gameStatusEnum == GameStatusEnum.GAME_IS_START || gameStatusEnum == GameStatusEnum.GAME_IS_PAUSE) {
-                this.menuPositionEnum = this.menuPositionEnum.getPrev();
-                this.updateImage();
-            }
+        }
+    }
+
+    private void escapeKeyPressed() {
+        if (this.gameController.getGameStatusEnum() == GameStatusEnum.GAME_IS_ON) {
+            this.stopTimers();
+            this.gameController.setGameStatusEnum(GameStatusEnum.GAME_IS_PAUSE);
+            this.updateImage();
+        } else if (this.gameController.getGameStatusEnum() == GameStatusEnum.GAME_IS_PAUSE) {
+            this.gameController.setGameStatusEnum(GameStatusEnum.GAME_IS_ON);
+            this.runTimers();
         }
     }
 
@@ -522,7 +553,15 @@ public class MainController {
         if (new Random().nextBoolean()) {
             sign = -1;
         }
-        this.gameController.addBall(new Ball(GameConstants.getBallRadius(), this.view.getWidth() / 2, this.view.getHeight() / 2, GameConstants.getBallDirX() * sign, GameConstants.getBallDirY()));
+//        this.gameController.addBall(new Ball(GameConstants.BALL_RADIUS, this.view.getWidth() / 2, this.view.getHeight() / 2, GameConstants.BALL_DIR_X * sign, GameConstants.BALL_DIR_Y));
+        this.gameController.addBall(
+                Ball.builder()
+                        .setRadius(GameConstants.BALL_RADIUS)
+                        .setPosX(this.view.getWidth() / 2)
+                        .setPosY(this.view.getHeight() / 2)
+                        .setDirX(GameConstants.BALL_DIR_X * sign)
+                        .setDirY(GameConstants.BALL_DIR_Y)
+                .build());
     }
 
     private void runTimers() {
@@ -569,7 +608,7 @@ public class MainController {
         public GameBonusTimer(GameBonus gameBonus) {
             this.gameBonus = gameBonus;
             this.counter = 10;
-            this.timeForDestroying = new Timer(Math.max(GameConstants.getBonusDestroyTimerDelay() / 10, 1), new EndOfBonusCycle(this));
+            this.timeForDestroying = new Timer(Math.max(GameConstants.TIMER_BONUS_DESTROY / 10, 1), new EndOfBonusCycle(this));
             this.timeForDestroying.restart();
         }
 
