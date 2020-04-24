@@ -1,3 +1,5 @@
+// Author: Walerij Hrul
+//
 package arkanoid.models;
 
 import org.junit.jupiter.api.Test;

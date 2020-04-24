@@ -1,3 +1,5 @@
+// Author: Walerij Hrul
+//
 package arkanoid.models;
 
 public class GameBonus implements RectShape {

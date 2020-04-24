@@ -1,3 +1,5 @@
+// Author: Walerij Hrul
+//
 package arkanoid;
 
 import arkanoid.controllers.MainController;

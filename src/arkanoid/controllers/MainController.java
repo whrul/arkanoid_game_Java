@@ -1,3 +1,5 @@
+// Author: Walerij Hrul
+//
 package arkanoid.controllers;
 
 import arkanoid.models.*;
