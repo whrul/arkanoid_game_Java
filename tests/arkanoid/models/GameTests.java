@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GameTests {
 
-    private Player player = new Player();
+    private Player player = Player.builder().build();
 
     private Game game = new Game(player);
 
@@ -52,26 +52,38 @@ public class GameTests {
 
     @Test
     void setScoresWorksCorrectly() {
-        game.setScores(7);
-        assertEquals(7, game.getScores());
+        int newScores = game.getScores() + 1;
+
+        game.setScores(newScores);
+
+        assertEquals(newScores, game.getScores());
     }
 
     @Test
     void setLivesWorksCorrectly() {
-        game.setLives(11);
-        assertEquals(11, game.getLives());
+        int newLives = game.getLives() + 1;
+
+        game.setLives(newLives);
+
+        assertEquals(newLives, game.getLives());
     }
 
     @Test
     void setLevelWorksCorrectly() {
-        game.setLevel(13);
-        assertEquals(13, game.getLevel());
+        int newLevel = game.getLevel() + 1;
+
+        game.setLevel(newLevel);
+
+        assertEquals(newLevel, game.getLevel());
     }
 
     @Test
     void setGameStatusEnumWorksCorrectly() {
-        game.setGameStatusEnum(GameStatusEnum.GAME_IS_PAUSE);
-        assertEquals(GameStatusEnum.GAME_IS_PAUSE, game.getGameStatusEnum());
+        GameStatusEnum newGameStatusEnum = (game.getGameStatusEnum() == GameStatusEnum.GAME_IS_PAUSE) ? GameStatusEnum.GAME_IS_ON : GameStatusEnum.GAME_IS_PAUSE;
+
+        game.setGameStatusEnum(newGameStatusEnum);
+
+        assertEquals(newGameStatusEnum, game.getGameStatusEnum());
     }
 
 

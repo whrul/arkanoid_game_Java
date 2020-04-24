@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BrickControllerTests {
 
-    private Brick brick = new Brick(0, 0, 0, 0, 0);
+    private Brick brick = Brick.builder().build();
     private BrickController brickController = new BrickController();
 
     @Test

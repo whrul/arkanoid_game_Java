@@ -11,8 +11,16 @@ public class GameBonusTests {
     private int width = 15;
     private int height = 20;
     private BonusEnum bonusEnum = BonusEnum.MOVE_PLAYER_UP;
+    private boolean used = false;
 
-    GameBonus gameBonus = new GameBonus(posX, posY, width, height, bonusEnum);
+    GameBonus gameBonus = GameBonus.builder()
+            .setPosX(posX)
+            .setPosY(posY)
+            .setWidth(width)
+            .setHeight(height)
+            .setBonusEnum(bonusEnum)
+            .setUsed(used)
+        .build();
 
     @Test
     void constructedGameBonusHasProperPosX() {
@@ -36,13 +44,16 @@ public class GameBonusTests {
 
     @Test
     void constructedGameBonusHasProperUsedAttr() {
-        assertEquals(false, gameBonus.isUsed());
+        assertEquals(used, gameBonus.isUsed());
     }
 
     @Test
     void setUsedXWorksCorrectly() {
-        gameBonus.setUsed(true);
-        assertEquals(true, gameBonus.isUsed());
+        boolean newState = !gameBonus.isUsed();
+
+        gameBonus.setUsed(newState);
+
+        assertEquals(newState, gameBonus.isUsed());
     }
 
 

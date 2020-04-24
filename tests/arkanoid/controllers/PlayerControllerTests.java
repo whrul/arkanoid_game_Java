@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PlayerControllerTests {
 
-    private Player player = new Player(0, 0, 0, 0, 0);
+    private Player player = Player.builder().build();
     private PlayerController playerController = new PlayerController(player);
 
     @Test

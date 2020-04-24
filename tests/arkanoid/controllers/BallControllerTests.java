@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BallControllerTests {
 
-    private Ball ball = new Ball(0, 0, 0, 0, 0);
+    private Ball ball = Ball.builder().build();
     private BallController ballController = new BallController();
 
     @Test

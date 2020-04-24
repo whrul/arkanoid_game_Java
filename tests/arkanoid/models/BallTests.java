@@ -10,7 +10,15 @@ public class BallTests {
     private int posY = 15;
     private int dirX = 20;
     private int dirY = 25;
-    private Ball ball = new Ball(radius, posX, posY, dirX, dirY);
+    private int dirYCoef = 1;
+    private Ball ball =  Ball.builder()
+            .setRadius(radius)
+            .setPosX(posX)
+            .setPosY(posY)
+            .setDirX(dirX)
+            .setDirY(dirY)
+            .setDirYCoef(dirYCoef)
+            .build();
 
     @Test
     void constructedBallHasProperRadius() {
@@ -39,31 +47,43 @@ public class BallTests {
 
     @Test
     void constructedBallHasProperDirYCoef() {
-        assertEquals(1, ball.getDirYCoef());
+        assertEquals(dirYCoef, ball.getDirYCoef());
     }
 
     @Test
     void setPosXWorksCorrectly() {
-        ball.setPosX(11);
-        assertEquals(11, ball.getPosX());
+        int newPosX = ball.getPosX() + 1;
+
+        ball.setPosX(newPosX);
+
+        assertEquals(newPosX, ball.getPosX());
     }
 
     @Test
     void setPosYWorksCorrectly() {
-        ball.setPosY(13);
-        assertEquals(13, ball.getPosY());
+        int newPosY = ball.getPosY() + 1;
+
+        ball.setPosY(newPosY);
+
+        assertEquals(newPosY, ball.getPosY());
     }
 
     @Test
     void setDirXWorksCorrectly() {
-        ball.setDirX(17);
-        assertEquals(17, ball.getDirX());
+        int newDirX = ball.getDirX() + 1;
+
+        ball.setDirX(newDirX);
+
+        assertEquals(newDirX, ball.getDirX());
     }
 
     @Test
     void setDirYWorksCorrectly() {
-        ball.setDirY(19);
-        assertEquals(19, ball.getDirY());
+        int newDirY = ball.getDirY() + 1;
+
+        ball.setDirY(newDirY);
+
+        assertEquals(newDirY, ball.getDirY());
     }
 
     @Test

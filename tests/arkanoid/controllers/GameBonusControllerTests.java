@@ -21,7 +21,7 @@ public class GameBonusControllerTests {
         public void closeView() {}
     };
     private GameBonusController gameBonusController = new GameBonusController(testView);
-    private Game game = new Game(new Player(1, 1, 1, 1, 1));
+    private Game game = new Game(Player.builder().build());
 
     @BeforeEach
     void allowBonuses() {
@@ -29,68 +29,85 @@ public class GameBonusControllerTests {
     }
     
     @Test
-    void movePlayerUpBonusShouldChangePlayerYPos() {
-        GameBonus gameBonus = new GameBonus(1, 1, 1, 1, BonusEnum.MOVE_PLAYER_UP);
-
+    void movePlayerUpBonusShouldDecreasePlayerYPosWhenActivate() {
+        GameBonus gameBonus = GameBonus.builder().setBonusEnum(BonusEnum.MOVE_PLAYER_UP).build();
         game.getPlayer().setPosY(100);
+
         gameBonusController.makeActive(gameBonus, game.getPlayer(), game.getBalls(), game.getBricks(), testView, true);
-        assert(game.getPlayer().getPosY() < 100);
 
+        assert(game.getPlayer().getPosY() < 100);
+    }
+    @Test
+    void movePlayerUpBonusShouldIncreasePlayerYPosWhenDeactivate() {
+        GameBonus gameBonus = GameBonus.builder().setBonusEnum(BonusEnum.MOVE_PLAYER_UP).setUsed(true).build();
         game.getPlayer().setPosY(100);
+
         gameBonusController.makeActive(gameBonus, game.getPlayer(), game.getBalls(), game.getBricks(), testView, false);
+
         assert(game.getPlayer().getPosY() > 100);
     }
 
     @Test
-    void increasePlayerSpeedBonusShouldChangeDirXOfPlayer() {
-        GameBonus gameBonus = new GameBonus(1, 1, 1, 1, BonusEnum.HIGH_SPEED_PLAYER);
-
+    void increasePlayerSpeedBonusShouldIncreaseDirXOfPlayerWhenActivate() {
+        GameBonus gameBonus = GameBonus.builder().setBonusEnum(BonusEnum.HIGH_SPEED_PLAYER).build();
         game.getPlayer().setDirX(15);
+
         gameBonusController.makeActive(gameBonus, game.getPlayer(), game.getBalls(), game.getBricks(), testView, true);
-        assert(game.getPlayer().getDirX() > 15);
 
+        assert(game.getPlayer().getDirX() > 15);
+    }
+    @Test
+    void increasePlayerSpeedBonusShouldDecreaseDirXOfPlayerWhenDeactivate() {
+        GameBonus gameBonus = GameBonus.builder().setBonusEnum(BonusEnum.HIGH_SPEED_PLAYER).setUsed(true).build();
         game.getPlayer().setDirX(15);
+
         gameBonusController.makeActive(gameBonus, game.getPlayer(), game.getBalls(), game.getBricks(), testView, false);
+
         assert(game.getPlayer().getDirX() < 15);
     }
 
     @Test
-    void decreasePlayerSpeedBonusShouldChangeDirXOfPlayer() {
-        GameBonus gameBonus = new GameBonus(1, 1, 1, 1, BonusEnum.LOW_SPEED_PLAYER);
-
+    void decreasePlayerSpeedBonusShouldDecreaseDirXOfPlayerWhenActivate() {
+        GameBonus gameBonus = GameBonus.builder().setBonusEnum(BonusEnum.LOW_SPEED_PLAYER).build();
         game.getPlayer().setDirX(15);
+
         gameBonusController.makeActive(gameBonus, game.getPlayer(), game.getBalls(), game.getBricks(), testView, true);
-        assert(game.getPlayer().getDirX() < 15);
 
+        assert(game.getPlayer().getDirX() < 15);
+    }
+    @Test
+    void decreasePlayerSpeedBonusShouldIncreaseDirXOfPlayerWhenDeactivate() {
+        GameBonus gameBonus = GameBonus.builder().setBonusEnum(BonusEnum.LOW_SPEED_PLAYER).setUsed(true).build();
         game.getPlayer().setDirX(15);
+
         gameBonusController.makeActive(gameBonus, game.getPlayer(), game.getBalls(), game.getBricks(), testView, false);
+
         assert(game.getPlayer().getDirX() > 15);
     }
 
     @Test
-    void increaseBallSpeedBonusShouldChangeDirXDirYOfAllBalls() {
-        GameBonus gameBonus = new GameBonus(1, 1, 1, 1, BonusEnum.HIGH_SPEED_BALLS);
+    void increaseBallSpeedBonusShouldIncreaseDirXDirYOfAllBallsWhenActivate() {
+        GameBonus gameBonus = GameBonus.builder().setBonusEnum(BonusEnum.HIGH_SPEED_BALLS).build();
         game.getBalls().clear();
-        Ball ball1 = new Ball(1, 1, 1, 1, 1);
-        Ball ball2 = new Ball(1, 1, 1, 1, 1);
-        game.getBalls().add(ball1);
-        game.getBalls().add(ball2);
+        game.getBalls().add(Ball.builder().setDirX(5).setDirY(5).build());
+        game.getBalls().add(Ball.builder().setDirX(5).setDirY(5).build());
 
-        for (Ball ball : game.getBalls()) {
-            ball.setDirY(5);
-            ball.setDirX(5);
-        }
         gameBonusController.makeActive(gameBonus, game.getPlayer(), game.getBalls(), game.getBricks(), testView, true);
+
         for (Ball ball : game.getBalls()) {
             assert(ball.getDirX() > 5);
             assert(ball.getDirY() > 5);
         }
+    }
+    @Test
+    void increaseBallSpeedBonusShouldDecreaseDirXDirYOfAllBallsWhenDeactivate() {
+        GameBonus gameBonus = GameBonus.builder().setBonusEnum(BonusEnum.HIGH_SPEED_BALLS).setUsed(true).build();
+        game.getBalls().clear();
+        game.getBalls().add(Ball.builder().setDirX(5).setDirY(5).build());
+        game.getBalls().add(Ball.builder().setDirX(5).setDirY(5).build());
 
-        for (Ball ball : game.getBalls()) {
-            ball.setDirY(5);
-            ball.setDirX(5);
-        }
         gameBonusController.makeActive(gameBonus, game.getPlayer(), game.getBalls(), game.getBricks(), testView, false);
+
         for (Ball ball : game.getBalls()) {
             assert(ball.getDirX() < 5);
             assert(ball.getDirY() < 5);
@@ -98,29 +115,32 @@ public class GameBonusControllerTests {
     }
 
     @Test
-    void increaseBallSpeedBonusShouldChangeDirYCoefOfAllBallsByOne() {
-        GameBonus gameBonus = new GameBonus(1, 1, 1, 1, BonusEnum.HIGH_SPEED_BALLS);
+    void increaseBallSpeedBonusShouldIncreaseDirYCoefOfAllBallsByOneWhenActivate() {
+        GameBonus gameBonus = GameBonus.builder().setBonusEnum(BonusEnum.HIGH_SPEED_BALLS).build();
         game.getBalls().clear();
-        Ball ball = new Ball(1, 1, 1, 1, 1);
-        game.getBalls().add(ball);
-        int curDirYCoef = ball.getDirYCoef();
+        game.getBalls().add(Ball.builder().setDirYCoef(2).build());
 
         gameBonusController.makeActive(gameBonus, game.getPlayer(), game.getBalls(), game.getBricks(), testView, true);
 
-        assertEquals(curDirYCoef + 1, ball.getDirYCoef());
-
+        assertEquals(3,  game.getBalls().lastElement().getDirYCoef());
+    }
+    @Test
+    void increaseBallSpeedBonusShouldDecreaseDirYCoefOfAllBallsByOneWhenDeactivate() {
+        GameBonus gameBonus = GameBonus.builder().setBonusEnum(BonusEnum.HIGH_SPEED_BALLS).setUsed(true).build();
+        game.getBalls().clear();
+        game.getBalls().add(Ball.builder().setDirYCoef(2).build());
 
         gameBonusController.makeActive(gameBonus, game.getPlayer(), game.getBalls(), game.getBricks(), testView, false);
 
-        assertEquals(curDirYCoef, ball.getDirYCoef());
+        assertEquals(1, game.getBalls().lastElement().getDirYCoef());
     }
 
     @Test
-    void multiplyBallsBonusShouldMultiplyAmountOfBallsByTwo() {
-        GameBonus gameBonus = new GameBonus(1, 1, 1, 1, BonusEnum.MULTI_BALLS);
+    void multiplyBallsBonusShouldMultiplyAmountOfBallsByTwoWhenActivate() {
+        GameBonus gameBonus = GameBonus.builder().setBonusEnum(BonusEnum.MULTI_BALLS).build();
         game.getBalls().clear();
         for (int i = 0; i < 5; ++i) {
-            game.getBalls().add(new Ball(1, 1, 1, 1, 1));
+            game.getBalls().add(Ball.builder().build());
         }
         int curSize = game.getBalls().size();
 
@@ -130,36 +150,51 @@ public class GameBonusControllerTests {
     }
 
     @Test
-    void makePlayerLongerBonusShouldChangeWidthOfPlayer() {
-        GameBonus gameBonus = new GameBonus(1, 1, 1, 1, BonusEnum.LONG_PLAYER);
-
+    void makePlayerLongerBonusShouldIncreaseWidthOfPlayerWhenActivate() {
+        GameBonus gameBonus = GameBonus.builder().setBonusEnum(BonusEnum.LONG_PLAYER).build();
         game.getPlayer().setWidth(100);
+
         gameBonusController.makeActive(gameBonus, game.getPlayer(), game.getBalls(), game.getBricks(), testView, true);
+
         assert(game.getPlayer().getWidth() > 100);
-
+    }
+    @Test
+    void makePlayerLongerBonusShouldDecreaseWidthOfPlayerWhenDeactivate() {
+        GameBonus gameBonus = GameBonus.builder().setBonusEnum(BonusEnum.LONG_PLAYER).setUsed(true).build();
         game.getPlayer().setWidth(100);
-        gameBonusController.makeActive(gameBonus, game.getPlayer(), game.getBalls(), game.getBricks(), testView, false);
-        assert(game.getPlayer().getWidth() < 100);
 
+        System.out.println(game.getPlayer().getWidth());
+
+        gameBonusController.makeActive(gameBonus, game.getPlayer(), game.getBalls(), game.getBricks(), testView, false);
+
+        System.out.println(game.getPlayer().getWidth());
+
+        assert(game.getPlayer().getWidth() < 100);
     }
 
+
     @Test
-    void makePlayerShorterBonusShouldChangeWidthOfPlayer() {
-        GameBonus gameBonus = new GameBonus(1, 1, 1, 1, BonusEnum.SHORT_PLAYER);
-
+    void makePlayerShorterBonusShouldDecreaseWidthOfPlayerWhenActivate() {
+        GameBonus gameBonus = GameBonus.builder().setBonusEnum(BonusEnum.SHORT_PLAYER).build();
         game.getPlayer().setWidth(100);
+
         gameBonusController.makeActive(gameBonus, game.getPlayer(), game.getBalls(), game.getBricks(), testView, true);
+
         assert(game.getPlayer().getWidth() < 100);
-
+    }
+    @Test
+    void makePlayerShorterBonusShouldIncreaseWidthOfPlayerWhenDeactivate() {
+        GameBonus gameBonus = GameBonus.builder().setBonusEnum(BonusEnum.SHORT_PLAYER).setUsed(true).build();
         game.getPlayer().setWidth(100);
-        gameBonusController.makeActive(gameBonus, game.getPlayer(), game.getBalls(), game.getBricks(), testView, false);
-        assert(game.getPlayer().getWidth() > 100);
 
+        gameBonusController.makeActive(gameBonus, game.getPlayer(), game.getBalls(), game.getBricks(), testView, false);
+
+        assert(game.getPlayer().getWidth() > 100);
     }
 
     @Test
     void whenBonusFuncIsCalledThenBonusShouldChangeStateToUsed() {
-        GameBonus gameBonus = new GameBonus(1, 1, 1, 1, BonusEnum.SHORT_PLAYER);
+        GameBonus gameBonus = GameBonus.builder().build();
 
         gameBonusController.makeActive(gameBonus, game.getPlayer(), game.getBalls(), game.getBricks(), testView, true);
 
@@ -169,8 +204,7 @@ public class GameBonusControllerTests {
     @Test
     void whenBonusFuncIsCalledThenBonusShouldNotChangeStateToUsedIfControllerCanNotActivateBonus() {
         gameBonusController.forbidAllBonusesForTests();
-
-        GameBonus gameBonus = new GameBonus(1, 1, 1, 1, BonusEnum.SHORT_PLAYER);
+        GameBonus gameBonus = GameBonus.builder().build();
 
         gameBonusController.makeActive(gameBonus, game.getPlayer(), game.getBalls(), game.getBricks(), testView, true);
 

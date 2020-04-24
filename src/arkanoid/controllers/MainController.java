@@ -32,7 +32,7 @@ public class MainController {
     public MainController() {
         this.ballController = new BallController();
         this.brickController = new BrickController();
-        this.playerController = new PlayerController(new Player());
+        this.playerController = new PlayerController(Player.builder().build());
         this.gameController = new GameController(new Game(this.playerController.getPlayer()));
         this.gameBonusTimers = new Vector<GameBonusTimer>();
 
@@ -76,7 +76,14 @@ public class MainController {
                     if (rightSideOfBrick > this.view.getWidth()) {
                         continue;
                     }
-                    this.gameController.addBrick(new Brick((i + 1) * GameConstants.BRICK_MARGIN + i * GameConstants.BRICK_WIDTH, (j + 1) * GameConstants.BRICK_MARGIN + j * GameConstants.BRICK_HEIGHT, GameConstants.BRICK_WIDTH, GameConstants.BRICK_HEIGHT, random.nextInt(this.gameController.getLevel() + 1) + 1));
+                    this.gameController.addBrick(
+                            Brick.builder()
+                            .setPosX((i + 1) * GameConstants.BRICK_MARGIN + i * GameConstants.BRICK_WIDTH)
+                            .setPosY((j + 1) * GameConstants.BRICK_MARGIN + j * GameConstants.BRICK_HEIGHT)
+                            .setWidth(GameConstants.BRICK_WIDTH)
+                            .setHeight(GameConstants.BRICK_HEIGHT)
+                            .setHitsForDestroyingStartVal(random.nextInt(this.gameController.getLevel() + 1) + 1)
+                        .build());
                 }
             }
         }
@@ -103,7 +110,14 @@ public class MainController {
         Random random = new Random();
         if (random.nextBoolean()) {
             int sizeOfSide = GameConstants.BONUS_MIN_SIDE + random.nextInt(GameConstants.BONUS_MAX_SIDE - GameConstants.BONUS_MIN_SIDE);
-            GameBonus gameBonus = new GameBonus(random.nextInt(this.view.getWidth() - sizeOfSide), random.nextInt(this.getPlayer().getPosY() - sizeOfSide),  sizeOfSide, sizeOfSide, Arrays.asList(BonusEnum.values()).get(random.nextInt(BonusEnum.values().length)));
+            GameBonus gameBonus = GameBonus.builder()
+                    .setPosX(random.nextInt(this.view.getWidth() - sizeOfSide))
+                    .setPosY(random.nextInt(this.getPlayer().getPosY() - sizeOfSide))
+                    .setWidth(sizeOfSide)
+                    .setHeight(sizeOfSide)
+                    .setBonusEnum( Arrays.asList(BonusEnum.values()).get(random.nextInt(BonusEnum.values().length)))
+                    .setUsed(false)
+                .build();
             this.gameController.addGameBonus(gameBonus);
             this.gameBonusTimers.add(new GameBonusTimer(gameBonus));
         }
@@ -539,7 +553,15 @@ public class MainController {
         if (new Random().nextBoolean()) {
             sign = -1;
         }
-        this.gameController.addBall(new Ball(GameConstants.BALL_RADIUS, this.view.getWidth() / 2, this.view.getHeight() / 2, GameConstants.BALL_DIR_X * sign, GameConstants.BALL_DIR_Y));
+//        this.gameController.addBall(new Ball(GameConstants.BALL_RADIUS, this.view.getWidth() / 2, this.view.getHeight() / 2, GameConstants.BALL_DIR_X * sign, GameConstants.BALL_DIR_Y));
+        this.gameController.addBall(
+                Ball.builder()
+                        .setRadius(GameConstants.BALL_RADIUS)
+                        .setPosX(this.view.getWidth() / 2)
+                        .setPosY(this.view.getHeight() / 2)
+                        .setDirX(GameConstants.BALL_DIR_X * sign)
+                        .setDirY(GameConstants.BALL_DIR_Y)
+                .build());
     }
 
     private void runTimers() {
