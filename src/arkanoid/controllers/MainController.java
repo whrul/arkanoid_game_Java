@@ -298,11 +298,21 @@ public class MainController {
         boolean wasHitted = false;
         for (int i = bricks.size() - 1; i >= 0; --i) {
             wasHitted = false;
-            if (CollisionDetectorController.circleHitsRectOnLeft(ball, bricks.get(i)) || CollisionDetectorController.circleHitsRectOnRight(ball, bricks.get(i))) {
+            if (CollisionDetectorController.circleHitsRectOnLeft(ball, bricks.get(i))) {
                 this.ballController.reverseXDir(ball);
+                ball.setPosX(bricks.get(i).getPosX() - ball.getDiameter());
                 wasHitted = true;
-            } else if (CollisionDetectorController.circleHitsRectOnUp(ball, bricks.get(i)) || CollisionDetectorController.circleHitsRectOnDown(ball, bricks.get(i))) {
+            } else if (CollisionDetectorController.circleHitsRectOnRight(ball, bricks.get(i))) {
+                this.ballController.reverseXDir(ball);
+                ball.setPosX(bricks.get(i).getPosX() + bricks.get(i).getWidth());
+                wasHitted = true;
+            } else if (CollisionDetectorController.circleHitsRectOnUp(ball, bricks.get(i))) {
                 this.ballController.reverseYDir(ball);
+                ball.setPosY(bricks.get(i).getPosY() - ball.getDiameter());
+                wasHitted = true;
+            } else if (CollisionDetectorController.circleHitsRectOnDown(ball, bricks.get(i))) {
+                this.ballController.reverseYDir(ball);
+                ball.setPosY(bricks.get(i).getPosY() + bricks.get(i).getHeight());
                 wasHitted = true;
             } else if (CollisionDetectorController.circleHitsRectOnLeftUpCorner(ball, bricks.get(i))) {
                 if (ball.getDirY() > 0) {
@@ -311,6 +321,8 @@ public class MainController {
                 if (ball.getDirX() > 0) {
                     this.ballController.reverseXDir(ball);
                 }
+                ballController.setNewCenterX(ball, bricks.get(i).getPosX() - ball.getRadius() * (bricks.get(i).getPosX() - ball.getCenterX()) / distBetween(ball.getCenterX(), ball.getCenterY(), bricks.get(i).getPosX(), bricks.get(i).getPosY()) - 1);
+                ballController.setNewCenterY(ball, bricks.get(i).getPosY() - ball.getRadius() * (bricks.get(i).getPosY() - ball.getCenterY()) / distBetween(ball.getCenterX(), ball.getCenterY(), bricks.get(i).getPosX(), bricks.get(i).getPosY()) - 1);
                 wasHitted = true;
             } else if (CollisionDetectorController.circleHitsRectOnLeftDownCorner(ball, bricks.get(i))) {
                 if (ball.getDirY() < 0) {
@@ -319,6 +331,8 @@ public class MainController {
                 if (ball.getDirX() > 0) {
                     this.ballController.reverseXDir(ball);
                 }
+                ballController.setNewCenterX(ball, bricks.get(i).getPosX() - ball.getRadius() * (bricks.get(i).getPosX() - ball.getCenterX()) / distBetween(ball.getCenterX(), ball.getCenterY(), bricks.get(i).getPosX(), bricks.get(i).getPosY() + bricks.get(i).getHeight()) - 1);
+                ballController.setNewCenterY(ball, bricks.get(i).getPosY() + bricks.get(i).getHeight() - ball.getRadius() * (bricks.get(i).getPosY() + bricks.get(i).getHeight() - ball.getCenterY()) / distBetween(ball.getCenterX(), ball.getCenterY(), bricks.get(i).getPosX(), bricks.get(i).getPosY() + bricks.get(i).getHeight()) + 1);
                 wasHitted = true;
             } else if (CollisionDetectorController.circleHitsRectOnRightUpCorner(ball, bricks.get(i))) {
                 if (ball.getDirY() > 0) {
@@ -327,6 +341,8 @@ public class MainController {
                 if (ball.getDirX() < 0) {
                     this.ballController.reverseXDir(ball);
                 }
+                ballController.setNewCenterX(ball, bricks.get(i).getPosX() + bricks.get(i).getWidth() - ball.getRadius() * (bricks.get(i).getPosX() + bricks.get(i).getWidth() - ball.getCenterX()) / distBetween(ball.getCenterX(), ball.getCenterY(), bricks.get(i).getPosX() + bricks.get(i).getWidth(), bricks.get(i).getPosY()) + 1);
+                ballController.setNewCenterY(ball, bricks.get(i).getPosY() - ball.getRadius() * (bricks.get(i).getPosY() - ball.getCenterY()) / distBetween(ball.getCenterX(), ball.getCenterY(), bricks.get(i).getPosX() + bricks.get(i).getWidth(), bricks.get(i).getPosY()) - 1);
                 wasHitted = true;
             }  else if (CollisionDetectorController.circleHitsRectOnRightDownCorner(ball, bricks.get(i))) {
                 if (ball.getDirY() < 0) {
@@ -335,6 +351,8 @@ public class MainController {
                 if (ball.getDirX() < 0) {
                     this.ballController.reverseXDir(ball);
                 }
+                ballController.setNewCenterX(ball, bricks.get(i).getPosX() + bricks.get(i).getWidth() - ball.getRadius() * (bricks.get(i).getPosX() + bricks.get(i).getWidth() - ball.getCenterX()) / distBetween(ball.getCenterX(), ball.getCenterY(), bricks.get(i).getPosX() + bricks.get(i).getWidth(), bricks.get(i).getPosY() + bricks.get(i).getHeight()) + 1);
+                ballController.setNewCenterY(ball, bricks.get(i).getPosY() + bricks.get(i).getHeight() - ball.getRadius() * (bricks.get(i).getPosY() + bricks.get(i).getHeight() - ball.getCenterY()) / distBetween(ball.getCenterX(), ball.getCenterY(), bricks.get(i).getPosX() + bricks.get(i).getWidth(), bricks.get(i).getPosY() + bricks.get(i).getHeight()) + 1);
                 wasHitted = true;
             }
             if (wasHitted) {

@@ -8,22 +8,22 @@ import arkanoid.models.RectShape;
 public class CollisionDetectorController {
     public static boolean circleHitsRectOnLeft(CircleShape circleShape, RectShape rectShape) {
         return isBetween(circleShape.getCenterY(), rectShape.getPosY(), rectShape.getPosY() + rectShape.getHeight())
-                && circleShape.getCenterX() < rectShape.getPosX()
+                && circleShape.getPosX() < rectShape.getPosX()
                 && circleShape.getPosX() + circleShape.getDiameter() > rectShape.getPosX();
     }
     public static boolean circleHitsRectOnRight(CircleShape circleShape, RectShape rectShape) {
         return isBetween(circleShape.getCenterY(), rectShape.getPosY(), rectShape.getPosY() + rectShape.getHeight())
-            && circleShape.getCenterX() > rectShape.getPosX() + rectShape.getWidth()
+            && circleShape.getPosX() + circleShape.getDiameter() > rectShape.getPosX() + rectShape.getWidth()
             && circleShape.getPosX() < rectShape.getPosX() + rectShape.getWidth();
     }
     public static boolean circleHitsRectOnUp(CircleShape circleShape, RectShape rectShape) {
         return isBetween(circleShape.getCenterX(), rectShape.getPosX(), rectShape.getPosX() + rectShape.getWidth())
-                && circleShape.getCenterY() < rectShape.getPosY()
+                && circleShape.getPosY() < rectShape.getPosY()
                 && circleShape.getPosY() + circleShape.getDiameter() > rectShape.getPosY();
     }
     public static boolean circleHitsRectOnDown(CircleShape circleShape, RectShape rectShape) {
        return isBetween(circleShape.getCenterX(), rectShape.getPosX(), rectShape.getPosX() + rectShape.getWidth())
-                && circleShape.getCenterY() > rectShape.getPosY() + rectShape.getHeight()
+                && circleShape.getPosY() + circleShape.getDiameter() > rectShape.getPosY() + rectShape.getHeight()
                 && circleShape.getPosY() < rectShape.getPosY() + rectShape.getHeight();
     }
     public static boolean circleHitsRectOnLeftUpCorner(CircleShape circleShape, RectShape rectShape) {
