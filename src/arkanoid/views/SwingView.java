@@ -242,9 +242,9 @@ public class SwingView extends JPanel implements View {
         hideMenuLabels();
         this.remove(this.gameOver);
         this.remove(this.gameOverScores);
-        this.remove(this.levelComplete);
         this.remove(this.gameOverNewGame);
         this.remove(this.gameOverExit);
+        this.remove(this.levelComplete);
 //
         updateGameLabels();
         drawGameBonuses(graphics);

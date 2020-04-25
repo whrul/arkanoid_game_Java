@@ -119,27 +119,6 @@ public class GameBonusControllerTests {
     }
 
     @Test
-    void increaseBallSpeedBonusShouldIncreaseDirYCoefOfAllBallsByOneWhenActivate() {
-        GameBonus gameBonus = GameBonus.builder().setBonusEnum(BonusEnum.HIGH_SPEED_BALLS).build();
-        game.getBalls().clear();
-        game.getBalls().add(Ball.builder().setDirYCoef(2).build());
-
-        gameBonusController.makeActive(gameBonus, game.getPlayer(), game.getBalls(), game.getBricks(), testView, true);
-
-        assertEquals(3,  game.getBalls().lastElement().getDirYCoef());
-    }
-    @Test
-    void increaseBallSpeedBonusShouldDecreaseDirYCoefOfAllBallsByOneWhenDeactivate() {
-        GameBonus gameBonus = GameBonus.builder().setBonusEnum(BonusEnum.HIGH_SPEED_BALLS).setUsed(true).build();
-        game.getBalls().clear();
-        game.getBalls().add(Ball.builder().setDirYCoef(2).build());
-
-        gameBonusController.makeActive(gameBonus, game.getPlayer(), game.getBalls(), game.getBricks(), testView, false);
-
-        assertEquals(1, game.getBalls().lastElement().getDirYCoef());
-    }
-
-    @Test
     void multiplyBallsBonusShouldMultiplyAmountOfBallsByTwoWhenActivate() {
         GameBonus gameBonus = GameBonus.builder().setBonusEnum(BonusEnum.MULTI_BALLS).build();
         game.getBalls().clear();

@@ -85,11 +85,9 @@ public class GameBonusController {
             if (status) {
                 ball.setDirX(ball.getDirX() * 2);
                 ball.setDirY(ball.getDirY() * 2);
-                ball.setDirYCoef(ball.getDirYCoef() + 1);
             } else {
                 ball.setDirX(ball.getDirX() / 2);
                 ball.setDirY(ball.getDirY() / 2);
-                ball.setDirYCoef(ball.getDirYCoef() - 1);
             }
         }
     }
@@ -106,7 +104,6 @@ public class GameBonusController {
                             .setPosY(balls.get(i).getPosY())
                             .setDirX(-balls.get(i).getDirX())
                             .setDirY(balls.get(i).getDirY())
-                            .setDirYCoef(balls.get(i).getDirYCoef())
                      .build()
                 );
 //                balls.lastElement().setDirYCoef(balls.get(i).getDirYCoef());

@@ -11,7 +11,6 @@ public class GameConstants {
     public static final int BALL_RADIUS = 8;
     public static final int BALL_DIR_X = -6;
     public static final int BALL_DIR_Y = -6;
-    public static final int BALL_MIN_SPEED_Y = 3;
 
     public static final int BRICK_WIDTH = 100;
     public static final int BRICK_HEIGHT = 30;
@@ -24,7 +23,7 @@ public class GameConstants {
     public static final int PLAYER_HEIGHT = 20;
     public static final int PLAYER_DIR_X = 15;
 
-    public static final int LIVES = 1;
+    public static final int LIVES = 10;
     public static final int SCORES = 0;
     public static final int LEVEL = 1;
 

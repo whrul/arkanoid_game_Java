@@ -8,8 +8,6 @@ public class Ball implements CircleShape {
     private int posY;
     private int dirX;
     private int dirY;
-    private int dirYCoef;
-
 
     private Ball() {};
 
@@ -52,17 +50,11 @@ public class Ball implements CircleShape {
             return this;
         }
 
-        public Builder setDirYCoef(int dirYCoef) {
-            this.dirYCoef = dirYCoef;
-            return this;
-        }
         private int radius = 1;
         private int posX = 0;
         private int posY = 0;
         private int dirX = 0;
         private int dirY = 0;
-        private int dirYCoef = 1;
-
 
     }
 
@@ -76,7 +68,6 @@ public class Ball implements CircleShape {
         this.posY = builder.posY;
         this.dirX = builder.dirX;
         this.dirY = builder.dirY;
-        this.dirYCoef = builder.dirYCoef;
     }
 
     @Override
@@ -135,11 +126,4 @@ public class Ball implements CircleShape {
         return this.radius * 2;
     }
 
-    public int getDirYCoef() {
-        return dirYCoef;
-    }
-
-    public void setDirYCoef(int dirYCoef) {
-        this.dirYCoef = dirYCoef;
-    }
 }

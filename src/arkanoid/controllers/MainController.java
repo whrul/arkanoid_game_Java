@@ -140,9 +140,16 @@ public class MainController {
        }
        this.checkPlayerPosition();
 
-       this.moveBallsAndActivateBonuses();
-        this.checkForLevelComplete();
-        this.checkForGameOver();
+        if (this.gameController.getGameStatusEnum() == GameStatusEnum.READY_TO_START_GAME) {
+            this.ballController.setNewCenterX(this.gameController.getBalls().lastElement(), this.gameController.getPlayer().getPosX() + this.gameController.getPlayer().getWidth() / 2);
+        }
+
+       if (this.getGameStatusEnum() == GameStatusEnum.GAME_IS_ON ) {
+           this.moveBallsAndActivateBonuses();
+           this.checkForLevelComplete();
+           this.checkForGameOver();
+       }
+
     }
 
     private void checkForLevelComplete() {
@@ -182,9 +189,9 @@ public class MainController {
         this.addBricks();
         this.addStartBall();
 
-        this.gameController.setGameStatusEnum(GameStatusEnum.GAME_IS_ON);
-
-        this.runTimers();
+        this.gameController.setGameStatusEnum(GameStatusEnum.READY_TO_START_GAME);
+        this.timer.start();
+//        this.runTimers();
     }
 
     private void checkForGameOver() {
@@ -206,6 +213,9 @@ public class MainController {
                 this.resetPlayerAttributes();
                 this.gameBonusController.reset(this.view);
                 this.addStartBall();
+                this.stopTimers();
+                this.gameController.setGameStatusEnum(GameStatusEnum.READY_TO_START_GAME);
+                this.timer.start();
             }
         }
     }
@@ -275,9 +285,9 @@ public class MainController {
 
             int ballCenterX = ball.getCenterX();
             int playerCenterX = playerController.getPlayer().getPosX() + playerController.getPlayer().getWidth() / 2;
-            int diff = Math.abs(ballCenterX - playerCenterX);
-            double help = diff * 2D / playerController.getPlayer().getWidth() * Math.abs(GameConstants.BALL_DIR_Y);
-            ball.setDirY(Math.max(GameConstants.BALL_MIN_SPEED_Y, Math.abs(GameConstants.BALL_DIR_Y) - (int)help) * ball.getDirYCoef());
+            int diff = (ballCenterX - playerCenterX);
+            double help = diff * 2D / playerController.getPlayer().getWidth() * Math.abs(GameConstants.BALL_DIR_X);
+            ball.setDirX((int)help);
 
             this.ballController.reverseYDir(ball);
             ball.setPosY(this.gameController.getPlayer().getPosY() - ball.getDiameter());
@@ -403,6 +413,9 @@ public class MainController {
             } else  if (this.additionalMenuPositionEnum == AdditionalMenuPositionEnum.EXIT) {
                 this.view.closeView();
             }
+        } else if (gameStatusEnum == GameStatusEnum.READY_TO_START_GAME) {
+            this.gameController.setGameStatusEnum(GameStatusEnum.GAME_IS_ON);
+            this.runTimers();
         }
     }
 
@@ -414,6 +427,10 @@ public class MainController {
         } else if (this.gameController.getGameStatusEnum() == GameStatusEnum.GAME_IS_PAUSE) {
             this.gameController.setGameStatusEnum(GameStatusEnum.GAME_IS_ON);
             this.runTimers();
+        } else if (this.gameController.getGameStatusEnum() == GameStatusEnum.READY_TO_START_GAME) {
+            this.gameController.setGameStatusEnum(GameStatusEnum.GAME_IS_ON);
+            this.runTimers();
+            this.escapeKeyPressed();
         }
     }
 
@@ -443,23 +460,23 @@ public class MainController {
         this.addBricks();
         this.addStartBall();
 
-        this.gameController.setGameStatusEnum(GameStatusEnum.GAME_IS_ON);
-
-        this.runTimers();
+        this.gameController.setGameStatusEnum(GameStatusEnum.READY_TO_START_GAME);
+        this.timer.start();
+//        this.runTimers();
     }
 
     private void addStartBall() {
-        int sign = 1;
-        if (new Random().nextBoolean()) {
-            sign = -1;
-        }
+//        int sign = 1;
+//        if (new Random().nextBoolean()) {
+//            sign = -1;
+//        }
 //        this.gameController.addBall(new Ball(GameConstants.BALL_RADIUS, this.view.getWidth() / 2, this.view.getHeight() / 2, GameConstants.BALL_DIR_X * sign, GameConstants.BALL_DIR_Y));
         this.gameController.addBall(
                 Ball.builder()
                         .setRadius(GameConstants.BALL_RADIUS)
-                        .setPosX(this.view.getWidth() / 2)
-                        .setPosY(this.view.getHeight() / 2)
-                        .setDirX(GameConstants.BALL_DIR_X * sign)
+                        .setPosX(this.view.getWidth() / 2 - GameConstants.BALL_RADIUS)
+                        .setPosY(this.gameController.getPlayer().getPosY() - GameConstants.BALL_RADIUS * 2)
+                        .setDirX(0)
                         .setDirY(GameConstants.BALL_DIR_Y)
                 .build());
     }

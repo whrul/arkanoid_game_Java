@@ -20,7 +20,6 @@ public class BallTests {
             .setPosY(posY)
             .setDirX(dirX)
             .setDirY(dirY)
-            .setDirYCoef(dirYCoef)
             .build();
 
     @Test
@@ -46,11 +45,6 @@ public class BallTests {
     @Test
     void constructedBallHasProperDirY() {
         assertEquals(dirY, ball.getDirY());
-    }
-
-    @Test
-    void constructedBallHasProperDirYCoef() {
-        assertEquals(dirYCoef, ball.getDirYCoef());
     }
 
     @Test
@@ -88,16 +82,6 @@ public class BallTests {
 
         assertEquals(newDirY, ball.getDirY());
     }
-
-    @Test
-    void setDirYCoefWorksCorrectly() {
-        int newDirYCoef = ball.getDirYCoef() + 1;
-
-        ball.setDirYCoef(newDirYCoef);
-
-        assertEquals(newDirYCoef, ball.getDirYCoef());
-    }
-
 
     @Test
     void diameterIsEqualToDoubleRadius() {
