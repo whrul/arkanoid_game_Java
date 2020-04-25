@@ -246,14 +246,13 @@ public class MainController {
     }
 
     private void checkBallPositionGameBonuses(Ball ball) {
-//        Vector<GameBonus> gameBonuses = this.gameController.getGameBonuses();
         for (int i = gameBonusTimers.size() - 1; i >=0; --i) {
             if (!gameBonusTimers.get(i).gameBonus.isUsed() &&
-                (circleHitsRectOnDown(ball, this.gameBonusTimers.get(i).gameBonus)
-                || circleHitsRectOnLeft(ball, this.gameBonusTimers.get(i).gameBonus)
-                || circleHitsRectOnRight(ball, this.gameBonusTimers.get(i).gameBonus)
-                || circleHitsRectOnUp(ball, this.gameBonusTimers.get(i).gameBonus)
-                || circleHitsRectOnCorner(ball, this.gameBonusTimers.get(i).gameBonus))) {
+                (CollisionDetectorController.circleHitsRectOnDown(ball, this.gameBonusTimers.get(i).gameBonus)
+                || CollisionDetectorController.circleHitsRectOnLeft(ball, this.gameBonusTimers.get(i).gameBonus)
+                || CollisionDetectorController.circleHitsRectOnRight(ball, this.gameBonusTimers.get(i).gameBonus)
+                || CollisionDetectorController.circleHitsRectOnUp(ball, this.gameBonusTimers.get(i).gameBonus)
+                || CollisionDetectorController.circleHitsRectOnCorner(ball, this.gameBonusTimers.get(i).gameBonus))) {
                 this.gameBonusController.makeActive(this.gameBonusTimers.get(i).gameBonus, this.gameController.getPlayer(), this.gameController.getBalls(), this.gameController.getBricks(), this.view, true);
                 this.gameController.destroyGameBonus(this.gameBonusTimers.get(i).gameBonus);
                 this.gameBonusTimers.get(i).restartTimer();
@@ -295,13 +294,13 @@ public class MainController {
         boolean wasHitted = false;
         for (int i = bricks.size() - 1; i >= 0; --i) {
             wasHitted = false;
-            if (this.circleHitsRectOnLeft(ball, bricks.get(i)) || this.circleHitsRectOnRight(ball, bricks.get(i))) {
+            if (CollisionDetectorController.circleHitsRectOnLeft(ball, bricks.get(i)) || CollisionDetectorController.circleHitsRectOnRight(ball, bricks.get(i))) {
                 this.ballController.reverseXDir(ball);
                 wasHitted = true;
-            } else if (this.circleHitsRectOnUp(ball, bricks.get(i)) || this.circleHitsRectOnDown(ball, bricks.get(i))) {
+            } else if (CollisionDetectorController.circleHitsRectOnUp(ball, bricks.get(i)) || CollisionDetectorController.circleHitsRectOnDown(ball, bricks.get(i))) {
                 this.ballController.reverseYDir(ball);
                 wasHitted = true;
-            } else if (this.circleHitsRectOnLeftUpCorner(ball, bricks.get(i))) {
+            } else if (CollisionDetectorController.circleHitsRectOnLeftUpCorner(ball, bricks.get(i))) {
                 if (ball.getDirY() > 0) {
                     this.ballController.reverseYDir(ball);
                 }
@@ -309,7 +308,7 @@ public class MainController {
                     this.ballController.reverseXDir(ball);
                 }
                 wasHitted = true;
-            } else if (this.circleHitsRectOnLeftDownCorner(ball, bricks.get(i))) {
+            } else if (CollisionDetectorController.circleHitsRectOnLeftDownCorner(ball, bricks.get(i))) {
                 if (ball.getDirY() < 0) {
                     this.ballController.reverseYDir(ball);
                 }
@@ -317,7 +316,7 @@ public class MainController {
                     this.ballController.reverseXDir(ball);
                 }
                 wasHitted = true;
-            } else if (this.circleHitsRectOnRightUpCorner(ball, bricks.get(i))) {
+            } else if (CollisionDetectorController.circleHitsRectOnRightUpCorner(ball, bricks.get(i))) {
                 if (ball.getDirY() > 0) {
                     this.ballController.reverseYDir(ball);
                 }
@@ -325,7 +324,7 @@ public class MainController {
                     this.ballController.reverseXDir(ball);
                 }
                 wasHitted = true;
-            }  else if (this.circleHitsRectOnRightDownCorner(ball, bricks.get(i))) {
+            }  else if (CollisionDetectorController.circleHitsRectOnRightDownCorner(ball, bricks.get(i))) {
                 if (ball.getDirY() < 0) {
                     this.ballController.reverseYDir(ball);
                 }
@@ -342,113 +341,6 @@ public class MainController {
                 }
             }
         }
-    }
-
-    private boolean circleHitsRectOnCorner(CircleShape circleShape, RectShape rectShape) {
-        return circleHitsRectOnLeftDownCorner(circleShape, rectShape)
-                || circleHitsRectOnLeftUpCorner(circleShape, rectShape)
-                || circleHitsRectOnRightDownCorner(circleShape, rectShape)
-                || circleHitsRectOnRightUpCorner(circleShape, rectShape);
-    }
-    private boolean circleHitsRectOnLeftUpCorner(CircleShape circleShape, RectShape rectShape) {
-        if (circleShape.getCenterX() < rectShape.getPosX()
-            && circleShape.getCenterY() < rectShape.getPosY()
-            && this.distBetween(circleShape.getCenterX(), circleShape.getCenterY(), rectShape.getPosX(), rectShape.getPosY()) < circleShape.getRadius()) {
-            if (!(rectShape instanceof GameBonus)) {
-                ballController.setNewCenterX((Ball)circleShape, rectShape.getPosX() - circleShape.getRadius() * (rectShape.getPosX() - circleShape.getCenterX()) / distBetween(circleShape.getCenterX(), circleShape.getCenterY(), rectShape.getPosX(), rectShape.getPosY()) - 1);
-                ballController.setNewCenterY((Ball)circleShape, rectShape.getPosY() - circleShape.getRadius() * (rectShape.getPosY() - circleShape.getCenterY()) / distBetween(circleShape.getCenterX(), circleShape.getCenterY(), rectShape.getPosX(), rectShape.getPosY()) - 1);
-
-            }
-            return true;
-        }
-        return false;
-    }
-    private boolean circleHitsRectOnLeftDownCorner(CircleShape circleShape, RectShape rectShape) {
-        if (circleShape.getCenterX() < rectShape.getPosX()
-                && circleShape.getCenterY() > rectShape.getPosY() + rectShape.getHeight()
-                && this.distBetween(circleShape.getCenterX(), circleShape.getCenterY(), rectShape.getPosX(), rectShape.getPosY() + rectShape.getHeight()) < circleShape.getRadius()) {
-            if (!(rectShape instanceof GameBonus)) {
-                ballController.setNewCenterX((Ball)circleShape, rectShape.getPosX() - circleShape.getRadius() * (rectShape.getPosX() - circleShape.getCenterX()) / distBetween(circleShape.getCenterX(), circleShape.getCenterY(), rectShape.getPosX(), rectShape.getPosY() + rectShape.getHeight()) - 1);
-                ballController.setNewCenterY((Ball)circleShape, rectShape.getPosY() + rectShape.getHeight() - circleShape.getRadius() * (rectShape.getPosY() + rectShape.getHeight() - circleShape.getCenterY()) / distBetween(circleShape.getCenterX(), circleShape.getCenterY(), rectShape.getPosX(), rectShape.getPosY() + rectShape.getHeight()) + 1);
-
-            }
-            return true;
-        }
-        return false;
-    }
-    private boolean circleHitsRectOnRightUpCorner(CircleShape circleShape, RectShape rectShape) {
-        if (circleShape.getCenterX() > rectShape.getPosX() + rectShape.getWidth()
-                && circleShape.getCenterY() < rectShape.getPosY()
-                && this.distBetween(circleShape.getCenterX(), circleShape.getCenterY(), rectShape.getPosX() + rectShape.getWidth(), rectShape.getPosY()) < circleShape.getRadius()) {
-            if (!(rectShape instanceof GameBonus)) {
-                ballController.setNewCenterX((Ball)circleShape, rectShape.getPosX() + rectShape.getWidth() - circleShape.getRadius() * (rectShape.getPosX() + rectShape.getWidth() - circleShape.getCenterX()) / distBetween(circleShape.getCenterX(), circleShape.getCenterY(), rectShape.getPosX() + rectShape.getWidth(), rectShape.getPosY()) + 1);
-                ballController.setNewCenterY((Ball)circleShape, rectShape.getPosY() - circleShape.getRadius() * (rectShape.getPosY() - circleShape.getCenterY()) / distBetween(circleShape.getCenterX(), circleShape.getCenterY(), rectShape.getPosX() + rectShape.getWidth(), rectShape.getPosY()) - 1);
-            }
-            return true;
-        }
-        return false;
-    }
-    private boolean circleHitsRectOnRightDownCorner(CircleShape circleShape, RectShape rectShape) {
-        if (circleShape.getCenterX() > rectShape.getPosX() + rectShape.getWidth()
-                && circleShape.getCenterY() > rectShape.getPosY() + rectShape.getHeight()
-                && this.distBetween(circleShape.getCenterX(), circleShape.getCenterY(), rectShape.getPosX() + rectShape.getWidth(), rectShape.getPosY() + rectShape.getHeight()) < circleShape.getRadius()) {
-            if (!(rectShape instanceof GameBonus)) {
-                ballController.setNewCenterX((Ball)circleShape, rectShape.getPosX() + rectShape.getWidth() - circleShape.getRadius() * (rectShape.getPosX() + rectShape.getWidth() - circleShape.getCenterX()) / distBetween(circleShape.getCenterX(), circleShape.getCenterY(), rectShape.getPosX() + rectShape.getWidth(), rectShape.getPosY() + rectShape.getHeight()) + 1);
-                ballController.setNewCenterY((Ball)circleShape, rectShape.getPosY() + rectShape.getHeight() - circleShape.getRadius() * (rectShape.getPosY() + rectShape.getHeight() - circleShape.getCenterY()) / distBetween(circleShape.getCenterX(), circleShape.getCenterY(), rectShape.getPosX() + rectShape.getWidth(), rectShape.getPosY() + rectShape.getHeight()) + 1);
-
-
-            }
-            return true;
-        }
-        return false;
-    }
-
-    private boolean circleHitsRectOnDown(CircleShape circleShape, RectShape rectShape) {
-        if (this.isBetween(circleShape.getCenterX(), rectShape.getPosX(), rectShape.getPosX() + rectShape.getWidth())
-                && circleShape.getCenterY() > rectShape.getPosY() + rectShape.getHeight()
-                && circleShape.getPosY() < rectShape.getPosY() + rectShape.getHeight()) {
-            if (!(rectShape instanceof GameBonus)) {
-                circleShape.setPosY(rectShape.getPosY() + rectShape.getHeight());
-            }
-            return true;
-        }
-        return false;
-    }
-
-    private boolean circleHitsRectOnUp(CircleShape circleShape, RectShape rectShape) {
-        if (this.isBetween(circleShape.getCenterX(), rectShape.getPosX(), rectShape.getPosX() + rectShape.getWidth())
-                && circleShape.getCenterY() < rectShape.getPosY()
-                && circleShape.getPosY() + circleShape.getDiameter() > rectShape.getPosY()) {
-            if (!(rectShape instanceof GameBonus)) {
-                circleShape.setPosY(rectShape.getPosY() - circleShape.getDiameter());
-            }
-            return true;
-        }
-        return false;
-    }
-
-    private boolean circleHitsRectOnRight(CircleShape circleShape, RectShape rectShape) {
-        if (this.isBetween(circleShape.getCenterY(), rectShape.getPosY(), rectShape.getPosY() + rectShape.getHeight())
-            && circleShape.getCenterX() > rectShape.getPosX() + rectShape.getWidth()
-            && circleShape.getPosX() < rectShape.getPosX() + rectShape.getWidth()) {
-            if (!(rectShape instanceof GameBonus)) {
-                circleShape.setPosX(rectShape.getPosX() + rectShape.getWidth());
-            }
-            return true;
-        }
-        return false;
-    }
-
-    private boolean circleHitsRectOnLeft(CircleShape circleShape, RectShape rectShape) {
-        if (this.isBetween(circleShape.getCenterY(), rectShape.getPosY(), rectShape.getPosY() + rectShape.getHeight())
-                && circleShape.getCenterX() < rectShape.getPosX()
-                && circleShape.getPosX() + circleShape.getDiameter() > rectShape.getPosX()) {
-            if (!(rectShape instanceof GameBonus)) {
-                circleShape.setPosX(rectShape.getPosX() - circleShape.getDiameter());
-            }
-            return true;
-        }
-        return false;
     }
 
     private void checkPlayerPosition() {

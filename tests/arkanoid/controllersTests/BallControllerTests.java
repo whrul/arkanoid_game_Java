@@ -1,7 +1,8 @@
 // Author: Walerij Hrul
 //
-package arkanoid.controllers;
+package arkanoid.controllersTests;
 
+import arkanoid.controllers.BallController;
 import arkanoid.models.Ball;
 import org.junit.jupiter.api.Test;
 

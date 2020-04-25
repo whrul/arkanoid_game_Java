@@ -1,7 +1,12 @@
 // Author: Walerij Hrul
 //
-package arkanoid.models;
+package arkanoid.modelsTests;
 
+import arkanoid.models.Game;
+import arkanoid.models.GameConstants;
+import arkanoid.models.GameStatusEnum;
+import arkanoid.models.Player;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,7 +39,7 @@ public class GameTests {
 
     @Test
     void constructedGameHasProperScores() {
-        assertEquals(GameConstants.SCORES, game.getScores());
+        Assertions.assertEquals(GameConstants.SCORES, game.getScores());
     }
 
     @Test
@@ -49,7 +54,7 @@ public class GameTests {
 
     @Test
     void constructedGameHasProperGameStatusEnum() {
-        assertEquals(GameStatusEnum.GAME_IS_START, game.getGameStatusEnum());
+        Assertions.assertEquals(GameStatusEnum.GAME_IS_START, game.getGameStatusEnum());
     }
 
     @Test

@@ -1,7 +1,8 @@
 // Author: Walerij Hrul
 //
-package arkanoid.models;
+package arkanoid.modelsTests;
 
+import arkanoid.models.Player;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

@@ -1,7 +1,8 @@
 // Author: Walerij Hrul
 //
-package arkanoid.controllers;
+package arkanoid.controllersTests;
 
+import arkanoid.controllers.GameController;
 import arkanoid.models.*;
 import org.junit.jupiter.api.Test;
 
