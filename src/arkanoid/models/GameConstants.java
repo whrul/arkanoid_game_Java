@@ -6,8 +6,7 @@ public class GameConstants {
     public static final int TIMER_GAME_CYCLE = 15;
     public static final int TIMER_BONUS_APPEAR = 1000;
     public static final int TIMER_BONUS_DESTROY = 15000;
-    public static final int DURATION_LEVEL_COMPLETE_SCREEN = 2000;
-    public static final int DURATION_GAME_OVER_SCREEN = 3500;
+    public static final int DURATION_LEVEL_COMPLETE_SCREEN = 1200;
 
     public static final int BALL_RADIUS = 8;
     public static final int BALL_DIR_X = -6;
@@ -25,7 +24,7 @@ public class GameConstants {
     public static final int PLAYER_HEIGHT = 20;
     public static final int PLAYER_DIR_X = 15;
 
-    public static final int LIVES = 5;
+    public static final int LIVES = 1;
     public static final int SCORES = 0;
     public static final int LEVEL = 1;
 

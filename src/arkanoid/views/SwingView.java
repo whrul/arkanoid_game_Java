@@ -28,6 +28,8 @@ public class SwingView extends JPanel implements View {
     private JLabel level;
     private JLabel gameOver;
     private JLabel gameOverScores;
+    private JLabel gameOverNewGame;
+    private JLabel gameOverExit;
     private JLabel levelComplete;
 
     private Vector<Color> colors;
@@ -87,6 +89,13 @@ public class SwingView extends JPanel implements View {
         gameOverScores = new JLabel("Scores");
         gameOverScores.setFont(new Font("TimesRoman", Font.BOLD, SwingViewConstants.GAME_OVER_FONT_SIZE));
         gameOverScores.setForeground(Color.WHITE);
+
+        gameOverNewGame = new JLabel("NEW GAME");
+        gameOverNewGame.setFont(new Font("TimesRoman", Font.BOLD, SwingViewConstants.GAME_OVER_FONT_SIZE / 2));
+        gameOverNewGame.setForeground(Color.WHITE);
+        gameOverExit = new JLabel("EXIT");
+        gameOverExit.setFont(new Font("TimesRoman", Font.BOLD, SwingViewConstants.GAME_OVER_FONT_SIZE / 2));
+        gameOverExit.setForeground(Color.WHITE);
     }
 
     private void createMenuLabels() {
@@ -207,6 +216,20 @@ public class SwingView extends JPanel implements View {
         gameOverScores.setText("Scores: " + this.mainController.getScores());
         gameOverScores.setBounds(this.width / 2 - gameOverScores.getPreferredSize().width / 2 , this.height / 2 - gameOverScores.getPreferredSize().height / 2, gameOverScores.getPreferredSize().width, gameOverScores.getPreferredSize().height);
         this.add(gameOverScores);
+
+        gameOverNewGame.setBounds(this.width / 2 - gameOverNewGame.getPreferredSize().width / 2 , this.height / 2 + gameOverNewGame.getPreferredSize().height * 3 / 2, gameOverNewGame.getPreferredSize().width, gameOverNewGame.getPreferredSize().height);
+        this.add(gameOverNewGame);
+
+        gameOverExit.setBounds(this.width / 2 - gameOverExit.getPreferredSize().width / 2 , this.height / 2 + gameOverExit.getPreferredSize().height * 5 / 2, gameOverExit.getPreferredSize().width, gameOverExit.getPreferredSize().height);
+        this.add(gameOverExit);
+
+        if (mainController.getAdditionalMenuPositionEnum() == AdditionalMenuPositionEnum.NEW_GAME) {
+            gameOverNewGame.setForeground(Color.WHITE);
+            gameOverExit.setForeground(Color.LIGHT_GRAY);
+        } else if (mainController.getAdditionalMenuPositionEnum() == AdditionalMenuPositionEnum.EXIT) {
+            gameOverExit.setForeground(Color.WHITE);
+            gameOverNewGame.setForeground(Color.LIGHT_GRAY);
+        }
     }
 
     private void hideGameLabels() {
@@ -220,6 +243,8 @@ public class SwingView extends JPanel implements View {
         this.remove(this.gameOver);
         this.remove(this.gameOverScores);
         this.remove(this.levelComplete);
+        this.remove(this.gameOverNewGame);
+        this.remove(this.gameOverExit);
 //
         updateGameLabels();
         drawGameBonuses(graphics);

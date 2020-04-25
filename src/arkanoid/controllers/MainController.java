@@ -28,6 +28,7 @@ public class MainController {
     private Vector<GameBonusTimer> gameBonusTimers;
 
     private MenuPositionEnum menuPositionEnum = MenuPositionEnum.NEW_GAME;
+    private AdditionalMenuPositionEnum additionalMenuPositionEnum = AdditionalMenuPositionEnum.NEW_GAME;
 
     private boolean gamePause = true;
 
@@ -199,15 +200,8 @@ public class MainController {
             if (this.gameController.decreaseLives() == 0) {
                 this.stopTimers();
                 this.gameController.setGameStatusEnum(GameStatusEnum.GAME_IS_OVER);
+                this.additionalMenuPositionEnum = additionalMenuPositionEnum.NEW_GAME;
                 this.updateImage();
-                new Timer(GameConstants.DURATION_GAME_OVER_SCREEN, new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent actionEvent) {
-                        gameController.setGameStatusEnum(GameStatusEnum.GAME_IS_START);
-                        ((Timer)actionEvent.getSource()).stop();
-                        updateImage();
-                    }
-                }).start();
             } else {
                 this.resetPlayerAttributes();
                 this.gameBonusController.reset(this.view);
@@ -372,29 +366,41 @@ public class MainController {
 
     private void upKeyPressed() {
         GameStatusEnum gameStatusEnum = this.gameController.getGameStatusEnum();
-        if (gameStatusEnum == GameStatusEnum.GAME_IS_OVER || gameStatusEnum == GameStatusEnum.GAME_IS_START || gameStatusEnum == GameStatusEnum.GAME_IS_PAUSE) {
+        if (gameStatusEnum == GameStatusEnum.GAME_IS_START || gameStatusEnum == GameStatusEnum.GAME_IS_PAUSE) {
             this.menuPositionEnum = this.menuPositionEnum.getPrev();
+            this.updateImage();
+        } else if (gameStatusEnum == GameStatusEnum.GAME_IS_OVER) {
+            this.additionalMenuPositionEnum = AdditionalMenuPositionEnum.NEW_GAME;
             this.updateImage();
         }
     }
 
     private void downKeyPressed() {
         GameStatusEnum gameStatusEnum = this.gameController.getGameStatusEnum();
-        if (gameStatusEnum == GameStatusEnum.GAME_IS_OVER || gameStatusEnum == GameStatusEnum.GAME_IS_START || gameStatusEnum == GameStatusEnum.GAME_IS_PAUSE) {
+        if (gameStatusEnum == GameStatusEnum.GAME_IS_START || gameStatusEnum == GameStatusEnum.GAME_IS_PAUSE) {
             this.menuPositionEnum = this.menuPositionEnum.getNext();
+            this.updateImage();
+        } else if (gameStatusEnum == GameStatusEnum.GAME_IS_OVER) {
+            this.additionalMenuPositionEnum = AdditionalMenuPositionEnum.EXIT;
             this.updateImage();
         }
     }
 
     private void enterKeyPressed() {
         GameStatusEnum gameStatusEnum = this.gameController.getGameStatusEnum();
-        if (gameStatusEnum == GameStatusEnum.GAME_IS_OVER || gameStatusEnum == GameStatusEnum.GAME_IS_START || gameStatusEnum == GameStatusEnum.GAME_IS_PAUSE) {
+        if (gameStatusEnum == GameStatusEnum.GAME_IS_START || gameStatusEnum == GameStatusEnum.GAME_IS_PAUSE) {
             if (this.menuPositionEnum == MenuPositionEnum.NEW_GAME) {
                 this.restartTheGame();
             } else if (this.menuPositionEnum == MenuPositionEnum.CONTINUE && gameStatusEnum == GameStatusEnum.GAME_IS_PAUSE) {
                 this.gameController.setGameStatusEnum(GameStatusEnum.GAME_IS_ON);
                 this.runTimers();
             } else if (this.menuPositionEnum == MenuPositionEnum.EXIT) {
+                this.view.closeView();
+            }
+        } else if (gameStatusEnum == GameStatusEnum.GAME_IS_OVER) {
+            if (this.additionalMenuPositionEnum == AdditionalMenuPositionEnum.NEW_GAME) {
+                this.restartTheGame();
+            } else  if (this.additionalMenuPositionEnum == AdditionalMenuPositionEnum.EXIT) {
                 this.view.closeView();
             }
         }
@@ -492,6 +498,10 @@ public class MainController {
 
     public int getLevel() {
         return this.gameController.getLevel();
+    }
+
+    public AdditionalMenuPositionEnum getAdditionalMenuPositionEnum() {
+        return this.additionalMenuPositionEnum;
     }
 
     public class GameBonusTimer {
