@@ -23,7 +23,7 @@ public class GameConstants {
     public static final int PLAYER_HEIGHT = 20;
     public static final int PLAYER_DIR_X = 15;
 
-    public static final int LIVES = 10;
+    public static final int LIVES = 5;
     public static final int SCORES = 0;
     public static final int LEVEL = 1;
 
