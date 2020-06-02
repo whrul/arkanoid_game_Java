@@ -21,3 +21,5 @@
 6. Press escape if you want to pause the game
 
 ![gamePicture](img/main.png)
+![gamePicture](img/game_over.png)
+![gamePicture](img/menu.png)
